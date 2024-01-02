@@ -13,9 +13,9 @@ type flagTree[T any] struct {
 // A max binomial heap.
 //
 // It has higher constant for insert and pop, but supports merging in O(log(len)).
-type BinomialHeap[T any, C func(T, T) int] struct {
+type BinomialHeap[T any] struct {
 	trees []*flagTree[T]
-	Cmp   C
+	Cmp   func(T, T) int
 	len   int
 }
 
@@ -24,7 +24,7 @@ type BinomialHeap[T any, C func(T, T) int] struct {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (b *BinomialHeap[T, C]) Len() int {
+func (b *BinomialHeap[T]) Len() int {
 	return b.len
 }
 
@@ -33,7 +33,7 @@ func (b *BinomialHeap[T, C]) Len() int {
 // time complexity: amortized O(log(len))
 //
 // space complexity: O(1)
-func (b *BinomialHeap[T, C]) Push(e T) {
+func (b *BinomialHeap[T]) Push(e T) {
 	b.len++
 	b.reserve()
 	b.mergeTree(&flagTree[T]{e, nil, nil}, 0)
@@ -44,7 +44,7 @@ func (b *BinomialHeap[T, C]) Push(e T) {
 // time complexity: O(log(len))
 //
 // space complexity: O(1)
-func (b *BinomialHeap[T, C]) Pop() {
+func (b *BinomialHeap[T]) Pop() {
 	b.len--
 	height := b.max()
 	tree := b.trees[height].left
@@ -64,7 +64,7 @@ func (b *BinomialHeap[T, C]) Pop() {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (b *BinomialHeap[T, C]) Top() T {
+func (b *BinomialHeap[T]) Top() T {
 	return b.trees[b.max()].key
 }
 
@@ -73,7 +73,7 @@ func (b *BinomialHeap[T, C]) Top() T {
 // time complexity: amortized O(log(len1) + log(len2))
 //
 // space complexity: O(1)
-func (b *BinomialHeap[T, C]) Merge(heap BinomialHeap[T, C]) {
+func (b *BinomialHeap[T]) Merge(heap BinomialHeap[T]) {
 	b.len += heap.len
 	b.reserve()
 	for height, tree := range heap.trees {
@@ -88,7 +88,7 @@ func (b *BinomialHeap[T, C]) Merge(heap BinomialHeap[T, C]) {
 // time complexity: O(log(len))
 //
 // space complexity: O(1)
-func (b *BinomialHeap[T, C]) max() int {
+func (b *BinomialHeap[T]) max() int {
 	m := -1
 	for i, tree := range b.trees {
 		if tree != nil && (m == -1 || b.Cmp(b.trees[i].key, b.trees[m].key) > 0) {
@@ -103,7 +103,7 @@ func (b *BinomialHeap[T, C]) max() int {
 // time complexity: O(1)
 //
 // space complexity: O(log(len))
-func (b *BinomialHeap[T, C]) reserve() {
+func (b *BinomialHeap[T]) reserve() {
 	maxHeight := bits.Len(uint(b.len))
 	if len(b.trees) < maxHeight {
 		trees := make([]*flagTree[T], maxHeight)
@@ -117,7 +117,7 @@ func (b *BinomialHeap[T, C]) reserve() {
 // time complexity: O(log(n))
 //
 // space complexity: O(1)
-func (b *BinomialHeap[T, C]) mergeTree(tree *flagTree[T], height int) {
+func (b *BinomialHeap[T]) mergeTree(tree *flagTree[T], height int) {
 	for ; height < len(b.trees); height++ {
 		t := b.trees[height]
 		if t == nil {

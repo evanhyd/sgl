@@ -258,8 +258,13 @@ func ExampleIterator_HasNext() {
 	list.PushFront(5)
 	list.PushFront(3)
 	iterator := list.Begin()
-	iterator.Next()
+	fmt.Println(iterator.HasNext())
 	iterator.Next()
 	fmt.Println(iterator.HasNext())
-	// Output: false
+	iterator.Next()
+	fmt.Println(iterator.HasNext())
+	// Output:
+	// true
+	// true
+	// false
 }

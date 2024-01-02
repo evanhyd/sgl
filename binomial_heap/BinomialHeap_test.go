@@ -6,7 +6,7 @@ import (
 )
 
 func TestBinomialHeap_Len(t *testing.T) {
-	heap := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	// Test Len on an empty heap
 	if len := heap.Len(); len != 0 {
 		t.Errorf("Len() = %d, want 0", len)
@@ -22,7 +22,7 @@ func TestBinomialHeap_Len(t *testing.T) {
 }
 
 func TestBinomialHeap_Push(t *testing.T) {
-	heap := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	// Test Push and Top
 	heap.Push(5)
 	if top := heap.Top(); top != 5 {
@@ -30,7 +30,7 @@ func TestBinomialHeap_Push(t *testing.T) {
 	}
 
 	// Test Push on an empty heap
-	heap = BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap = BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	heap.Push(10)
 	if top := heap.Top(); top != 10 {
 		t.Errorf("Top() = %d, want 10", top)
@@ -44,7 +44,7 @@ func TestBinomialHeap_Push(t *testing.T) {
 	}
 
 	// Test Push with elements in descending order
-	descHeap := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return b - a }}
+	descHeap := BinomialHeap[int]{Cmp: func(a, b int) int { return b - a }}
 	descHeap.Push(20)
 	descHeap.Push(15)
 	descHeap.Push(10)
@@ -53,7 +53,7 @@ func TestBinomialHeap_Push(t *testing.T) {
 	}
 
 	// Test Push with repeated elements
-	repeatHeap := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	repeatHeap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	repeatHeap.Push(5)
 	repeatHeap.Push(5)
 	repeatHeap.Push(5)
@@ -62,7 +62,7 @@ func TestBinomialHeap_Push(t *testing.T) {
 	}
 
 	// Test Push with lots of elements
-	bigHeap := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	bigHeap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	for i := 0; i < 100; i++ {
 		bigHeap.Push(i)
 	}
@@ -78,7 +78,7 @@ func TestBinomialHeap_Push(t *testing.T) {
 }
 
 func TestBinomialHeap_Pop(t *testing.T) {
-	heap := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 
 	// Test Pop after pushing elements
 	heap.Push(5)
@@ -101,7 +101,7 @@ func TestBinomialHeap_Pop(t *testing.T) {
 }
 
 func TestBinomialHeap_Top(t *testing.T) {
-	heap := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 
 	// Test Top after pushing elements
 	heap.Push(5)
@@ -120,11 +120,11 @@ func TestBinomialHeap_Top(t *testing.T) {
 
 func TestBinomialHeap_Merge(t *testing.T) {
 	// Test Merge with two non-empty heaps
-	heap1 := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap1 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	heap1.Push(5)
 	heap1.Push(3)
 
-	heap2 := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap2 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	heap2.Push(10)
 	heap2.Push(8)
 
@@ -138,11 +138,11 @@ func TestBinomialHeap_Merge(t *testing.T) {
 	}
 
 	// Test Merge with one empty heap
-	heap3 := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap3 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	heap3.Push(2)
 	heap3.Push(4)
 
-	heap4 := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap4 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	heap4.Merge(heap3)
 
 	if len := heap4.Len(); len != 2 {
@@ -153,8 +153,8 @@ func TestBinomialHeap_Merge(t *testing.T) {
 	}
 
 	// Test merge two big heaps
-	bigHeap1 := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
-	bigHeap2 := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	bigHeap1 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	bigHeap2 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	for i := -100; i < 0; i++ {
 		bigHeap1.Push(i)
 	}
@@ -178,7 +178,7 @@ func TestBinomialHeap_Merge(t *testing.T) {
 }
 
 func ExampleBinomialHeap_Len() {
-	heap := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	fmt.Println(heap.Len())
 	heap.Push(123)
 	fmt.Println(heap.Len())
@@ -189,7 +189,7 @@ func ExampleBinomialHeap_Len() {
 }
 
 func ExampleBinomialHeap_Push() {
-	heap := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	heap.Push(5)
 	heap.Push(3)
 	heap.Push(7)
@@ -204,7 +204,7 @@ func ExampleBinomialHeap_Push() {
 }
 
 func ExampleBinomialHeap_Pop() {
-	heap := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	heap.Push(5)
 	heap.Push(3)
 	heap.Push(7)
@@ -217,7 +217,7 @@ func ExampleBinomialHeap_Pop() {
 }
 
 func ExampleBinomialHeap_Top() {
-	heap := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	heap.Push(5)
 	heap.Push(3)
 	heap.Push(7)
@@ -227,11 +227,11 @@ func ExampleBinomialHeap_Top() {
 
 func ExampleBinomialHeap_Merge() {
 	// Merge two binomial heaps and print the top element after merging
-	heap1 := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap1 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	heap1.Push(5)
 	heap1.Push(3)
 
-	heap2 := BinomialHeap[int, func(int, int) int]{Cmp: func(a, b int) int { return a - b }}
+	heap2 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	heap2.Push(10)
 	heap2.Push(8)
 

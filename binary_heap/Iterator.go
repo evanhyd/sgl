@@ -1,17 +1,17 @@
 package binary_heap
 
 // A binary heap iterator that traverse from max to min elements.
-type Iterator[T any, C func(T, T) int] struct {
-	heap  *BinaryHeap[T, C]
-	queue BinaryHeap[int, func(int, int) int]
+type Iterator[T any] struct {
+	heap  *BinaryHeap[T]
+	queue BinaryHeap[int]
 }
 
 // Create a binary heap iterator.
-func make[T any, C func(T, T) int](heap *BinaryHeap[T, C]) Iterator[T, C] {
-	iter := Iterator[T, C]{
+func make[T any, C func(T, T) int](heap *BinaryHeap[T]) Iterator[T] {
+	iter := Iterator[T]{
 		heap,
-		BinaryHeap[int, func(int, int) int]{nil, func(i, j int) int {
-			return heap.cmp(heap.slice[i], heap.slice[j])
+		BinaryHeap[int]{nil, func(i, j int) int {
+			return heap.Cmp(heap.slice[i], heap.slice[j])
 		}},
 	}
 
@@ -26,7 +26,7 @@ func make[T any, C func(T, T) int](heap *BinaryHeap[T, C]) Iterator[T, C] {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (i *Iterator[T, C]) Get() T {
+func (i *Iterator[T]) Get() T {
 	return i.heap.slice[i.queue.Top()]
 }
 
@@ -47,7 +47,7 @@ func (i *Iterator[T, C]) Get() T {
 // time complexity: O(n log(n))
 //
 // space complexity: O(n)
-func (i *Iterator[T, C]) Next() {
+func (i *Iterator[T]) Next() {
 	top := i.queue.Top()
 	i.queue.Pop()
 
@@ -64,6 +64,6 @@ func (i *Iterator[T, C]) Next() {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (i *Iterator[T, C]) HasNext() bool {
+func (i *Iterator[T]) HasNext() bool {
 	return i.queue.Len() > 0
 }

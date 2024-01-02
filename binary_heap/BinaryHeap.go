@@ -1,9 +1,9 @@
 package binary_heap
 
 // A max binary heap.
-type BinaryHeap[T any, C func(T, T) int] struct {
+type BinaryHeap[T any] struct {
 	slice []T
-	cmp   C
+	Cmp   func(T, T) int
 }
 
 // Heapify the slice using cmp as predicate.
@@ -11,8 +11,8 @@ type BinaryHeap[T any, C func(T, T) int] struct {
 // time complexity: O(n)
 //
 // space complexity: O(1)
-func Make[T any, C func(T, T) int](slice []T, cmp C) BinaryHeap[T, C] {
-	heap := BinaryHeap[T, C]{slice, cmp}
+func Heapify[T any](slice []T, cmp func(T, T) int) BinaryHeap[T] {
+	heap := BinaryHeap[T]{slice, cmp}
 	for i := len(heap.slice)/2 - 1; i >= 0; i-- {
 		heap.fixDown(i)
 	}
@@ -24,7 +24,7 @@ func Make[T any, C func(T, T) int](slice []T, cmp C) BinaryHeap[T, C] {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (d *BinaryHeap[T, C]) Len() int {
+func (d *BinaryHeap[T]) Len() int {
 	return len(d.slice)
 }
 
@@ -33,7 +33,7 @@ func (d *BinaryHeap[T, C]) Len() int {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (d *BinaryHeap[T, C]) Cap() int {
+func (d *BinaryHeap[T]) Cap() int {
 	return cap(d.slice)
 }
 
@@ -42,7 +42,7 @@ func (d *BinaryHeap[T, C]) Cap() int {
 // time complexity: amortized O(log(len))
 //
 // space complexity: amortized O(1)
-func (b *BinaryHeap[T, C]) Push(e T) {
+func (b *BinaryHeap[T]) Push(e T) {
 	b.slice = append(b.slice, e)
 	b.fixUp(len(b.slice) - 1)
 }
@@ -52,7 +52,7 @@ func (b *BinaryHeap[T, C]) Push(e T) {
 // time complexity: O(log(len))
 //
 // space complexity: O(1)
-func (b *BinaryHeap[T, C]) Pop() {
+func (b *BinaryHeap[T]) Pop() {
 	last := len(b.slice) - 1
 	b.slice[0] = b.slice[last]
 	var zero T
@@ -66,7 +66,7 @@ func (b *BinaryHeap[T, C]) Pop() {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (b *BinaryHeap[T, C]) Top() T {
+func (b *BinaryHeap[T]) Top() T {
 	return b.slice[0]
 }
 
@@ -75,8 +75,8 @@ func (b *BinaryHeap[T, C]) Top() T {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (d *BinaryHeap[T, C]) Begin() Iterator[T, C] {
-	return make[T, C](d)
+func (d *BinaryHeap[T]) Begin() Iterator[T] {
+	return make[T](d)
 }
 
 // Fix the heap property start from child upward.
@@ -84,10 +84,10 @@ func (d *BinaryHeap[T, C]) Begin() Iterator[T, C] {
 // time complexity: O(log(len))
 //
 // space complexity: O(1)
-func (b *BinaryHeap[T, C]) fixUp(child int) {
+func (b *BinaryHeap[T]) fixUp(child int) {
 	for i := child; i > 0; {
 		p := b.parent(i)
-		if b.cmp(b.slice[i], b.slice[p]) > 0 {
+		if b.Cmp(b.slice[i], b.slice[p]) > 0 {
 			b.slice[i], b.slice[p] = b.slice[p], b.slice[i]
 			i = p
 		} else {
@@ -101,14 +101,14 @@ func (b *BinaryHeap[T, C]) fixUp(child int) {
 // time complexity: O(log(len))
 //
 // space complexity: O(1)
-func (b *BinaryHeap[T, C]) fixDown(root int) {
+func (b *BinaryHeap[T]) fixDown(root int) {
 	for i, j := root, len(b.slice)/2; i < j; {
 		child := b.left(i)
-		if r := child + 1; r < len(b.slice) && b.cmp(b.slice[r], b.slice[child]) > 0 {
+		if r := child + 1; r < len(b.slice) && b.Cmp(b.slice[r], b.slice[child]) > 0 {
 			child = r
 		}
 
-		if b.cmp(b.slice[child], b.slice[i]) > 0 {
+		if b.Cmp(b.slice[child], b.slice[i]) > 0 {
 			b.slice[i], b.slice[child] = b.slice[child], b.slice[i]
 			i = child
 		} else {
@@ -122,7 +122,7 @@ func (b *BinaryHeap[T, C]) fixDown(root int) {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (b *BinaryHeap[T, C]) parent(i int) int {
+func (b *BinaryHeap[T]) parent(i int) int {
 	return (i - 1) / 2
 }
 
@@ -131,6 +131,6 @@ func (b *BinaryHeap[T, C]) parent(i int) int {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (b *BinaryHeap[T, C]) left(i int) int {
+func (b *BinaryHeap[T]) left(i int) int {
 	return i*2 + 1
 }

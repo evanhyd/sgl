@@ -5,7 +5,7 @@ type Iterator[T any] struct {
 	n **node[T]
 }
 
-// Return the pointer to the node value.
+// Return the pointer to the value.
 //
 // time complexity: O(1)
 //
