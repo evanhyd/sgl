@@ -112,6 +112,55 @@ func (a *AVLTree[T]) Contain(e T) bool {
 	return false
 }
 
+// Remove e from the tree.
+//
+// time complexity: O(log(len))
+//
+// space complexity: O(1)
+func (a *AVLTree[T]) Remove(e T) {
+	stack := [32]**node[T]{}
+	pos := -1
+
+	//find the node to remove
+	curr := &a.root
+	for *curr != nil {
+		pos++
+		stack[pos] = curr
+
+		if cmp := a.Cmp(e, (*curr).key); cmp < 0 {
+			curr = &(*curr).left
+		} else if cmp > 0 {
+			curr = &(*curr).right
+		} else {
+			break
+		}
+	}
+
+	//find the replacement
+	if *curr != nil {
+		if (*curr).right == nil {
+			*curr = (*curr).left
+		} else {
+			target := *curr
+			for curr = &(*curr).right; (*curr).left != nil; curr = &(*curr).left {
+				pos++
+				stack[pos] = curr
+			}
+			target.key = (*curr).key
+			*curr = (*curr).right
+		}
+
+		if *stack[pos] == nil {
+			pos--
+		}
+
+		a.len--
+		for i := pos; i >= 0; i-- {
+			a.balance(stack[i])
+		}
+	}
+}
+
 // Return the min element.
 //
 // time complexity: O(log(len))
@@ -145,13 +194,13 @@ func (a *AVLTree[T]) Max() T {
 // space complexity: O(1)
 func (a *AVLTree[T]) balance(p **node[T]) {
 	if factor := (*p).balanceFactor(); factor < -1 {
-		if (*p).left.balanceFactor() < 0 {
+		if (*p).left.balanceFactor() <= 0 {
 			a.rightRotate(p)
 		} else {
 			a.leftRightRotate(p)
 		}
 	} else if factor > 1 {
-		if (*p).right.balanceFactor() > 0 {
+		if (*p).right.balanceFactor() >= 0 {
 			a.leftRotate(p)
 		} else {
 			a.rightLeftRotate(p)
