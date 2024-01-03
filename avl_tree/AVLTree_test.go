@@ -114,7 +114,40 @@ func TestAVLTree_Insert(t *testing.T) {
 	}
 }
 
-func TestAVLTreeIterator(t *testing.T) {
+func TestAVLTree_Contain(t *testing.T) {
+	tree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	for i := 0; i < 100; i += 2 {
+		tree.Insert(i)
+	}
+	for i := 0; i < 100; i++ {
+		shoulContain := (i%2 == 0)
+		if contain := tree.Contain(i); contain != shoulContain {
+			t.Errorf("Contain(%v) = %v, want %v", i, contain, shoulContain)
+		}
+	}
+}
+
+func TestAVLTree_Min(t *testing.T) {
+	tree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	for i := 0; i < 100; i++ {
+		tree.Insert(i)
+	}
+	if m := tree.Min(); m != 0 {
+		t.Errorf("Min() = %d, want %d", m, 0)
+	}
+}
+
+func TestAVLTree_Max(t *testing.T) {
+	tree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	for i := 0; i < 100; i++ {
+		tree.Insert(i)
+	}
+	if m := tree.Max(); m != 99 {
+		t.Errorf("Max() = %d, want %d", m, 99)
+	}
+}
+
+func TestIterator(t *testing.T) {
 	tree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
 	elements := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33}
 	for _, e := range elements {
@@ -127,5 +160,37 @@ func TestAVLTreeIterator(t *testing.T) {
 			t.Errorf("Get() = %d, want %d", *iter.Get(), i)
 		}
 		i++
+	}
+}
+
+func BenchmarkAVLTree_Insert_Small(b *testing.B) {
+	// Note:
+	// Allocating slice brings a huge performance penalty.
+	// Recursion is consistently faster than the iterative array version.
+	//
+	// int64
+	// iterative slice: BenchmarkAVLTree_Insert_Small-16    	 3736772	       337.5 ns/op	     202 B/op	       2 allocs/op
+	// iterative array: BenchmarkAVLTree_Insert_Small-16    	 5551730	       236.3 ns/op	      32 B/op	       1 allocs/op
+	// recursion:       BenchmarkAVLTree_Insert_Small-16    	 5480019	       230.7 ns/op	      32 B/op	       1 allocs/op
+
+	tree := AVLTree[int64]{Cmp: func(a, b int64) int { return int(a - b) }}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		tree.Insert(int64(i))
+	}
+}
+
+func BenchmarkAVLTree_Insert_Big(b *testing.B) {
+	// Note:
+	// [20]int64
+	// iterative slice: BenchmarkAVLTree_Insert_Big-16    	 2328404	       492.9 ns/op	     358 B/op	       2 allocs/op
+	// iterative array: BenchmarkAVLTree_Insert_Big-16    	 2804586	       419.4 ns/op	     192 B/op	       1 allocs/op
+	// recursion:       BenchmarkAVLTree_Insert_Big-16    	 2213972	       543.8 ns/op	     192 B/op	       1 allocs/op
+
+	type Large [20]int64
+	tree := AVLTree[Large]{Cmp: func(a, b Large) int { return int(a[0] - b[0]) }}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		tree.Insert(Large{int64(i)})
 	}
 }

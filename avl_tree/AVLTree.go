@@ -2,7 +2,6 @@ package avl_tree
 
 import (
 	"fmt"
-	"math/bits"
 )
 
 type node[T any] struct {
@@ -71,11 +70,14 @@ func (a *AVLTree[T]) Len() int {
 //
 // space complexity: O(1)
 func (a *AVLTree[T]) Insert(e T) {
-	stack := make([]**node[T], 0, bits.Len(uint(a.len))+1)
+	stack := [32]**node[T]{}
+	pos := -1
 
 	curr := &a.root
 	for *curr != nil {
-		stack = append(stack, curr)
+		pos++
+		stack[pos] = curr
+
 		if cmp := a.Cmp(e, (*curr).key); cmp < 0 {
 			curr = &(*curr).left
 		} else if cmp > 0 {
@@ -87,9 +89,53 @@ func (a *AVLTree[T]) Insert(e T) {
 	*curr = &node[T]{e, nil, nil, 0}
 	a.len++
 
-	for i := len(stack) - 1; i >= 0; i-- {
+	for i := pos; i >= 0; i-- {
 		a.balance(stack[i])
 	}
+}
+
+// Return true if the tree contains e.
+//
+// time complexity: O(log(len))
+//
+// space complexity: O(1)
+func (a *AVLTree[T]) Contain(e T) bool {
+	for curr := a.root; curr != nil; {
+		if cmp := a.Cmp(e, (*curr).key); cmp < 0 {
+			curr = curr.left
+		} else if cmp > 0 {
+			curr = curr.right
+		} else {
+			return true
+		}
+	}
+	return false
+}
+
+// Return the min element.
+//
+// time complexity: O(log(len))
+//
+// space complexity: O(1)
+func (a *AVLTree[T]) Min() T {
+	curr := a.root
+	for curr.left != nil {
+		curr = curr.left
+	}
+	return curr.key
+}
+
+// Return the max element.
+//
+// time complexity: O(log(len))
+//
+// space complexity: O(1)
+func (a *AVLTree[T]) Max() T {
+	curr := a.root
+	for curr.right != nil {
+		curr = curr.right
+	}
+	return curr.key
 }
 
 // Balance the subtree rooted at p.
