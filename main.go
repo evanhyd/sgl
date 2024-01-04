@@ -1,8 +1,9 @@
 package main
 
 import (
-	"sgl/binomial_heap"
 	"strings"
+
+	"github.com/evanhyd/sgl/binomial_heap"
 )
 
 func main() {
