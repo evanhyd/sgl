@@ -235,3 +235,82 @@ func BenchmarkAVLTree_Insert_Big(b *testing.B) {
 		tree.Insert(Large{int64(i)})
 	}
 }
+
+func ExampleAVLTree_Insert() {
+	intTree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	intTree.Insert(10)
+	intTree.Insert(5)
+	intTree.Insert(15)
+}
+
+func ExampleAVLTree_Contain() {
+	intTree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	intTree.Insert(10)
+	intTree.Insert(5)
+	intTree.Insert(15)
+
+	fmt.Println(intTree.Contain(5))
+	fmt.Println(intTree.Contain(6))
+	// Output:
+	// true
+	// false
+}
+
+func ExampleAVLTree_Remove() {
+	intTree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	intTree.Insert(10)
+	intTree.Insert(5)
+	intTree.Insert(15)
+
+	fmt.Println(intTree.Contain(5))
+	intTree.Remove(5)
+	fmt.Println(intTree.Contain(5))
+	// Output:
+	// true
+	// false
+}
+
+func ExampleAVLTree_Min() {
+	intTree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	intTree.Insert(10)
+	intTree.Insert(5)
+	intTree.Insert(15)
+
+	fmt.Println(intTree.Min())
+	// Output:
+	// 5
+}
+
+func ExampleAVLTree_Max() {
+	intTree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	intTree.Insert(10)
+	intTree.Insert(5)
+	intTree.Insert(15)
+
+	fmt.Println(intTree.Max())
+	// Output:
+	// 15
+}
+
+func ExampleIterator() {
+	intTree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	intTree.Insert(10)
+	intTree.Insert(-436)
+	intTree.Insert(5)
+	intTree.Insert(15)
+	intTree.Insert(12)
+	intTree.Insert(8)
+	intTree.Insert(6)
+
+	for iter := intTree.Begin(); iter.HasNext(); iter.Next() {
+		fmt.Println(*iter.Get())
+	}
+	// Output:
+	// -436
+	// 5
+	// 6
+	// 8
+	// 10
+	// 12
+	// 15
+}

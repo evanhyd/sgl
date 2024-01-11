@@ -1,9 +1,5 @@
 package avl_tree
 
-import (
-	"fmt"
-)
-
 type node[T any] struct {
 	key    T
 	left   *node[T]
@@ -310,6 +306,5 @@ func (a *AVLTree[T]) Begin() Iterator[T] {
 	}
 	iter := Iterator[T]{make([]*node[T], 0, height)}
 	iter.addLeftTree(a.root)
-	fmt.Println(iter.stack)
 	return iter
 }
