@@ -6,13 +6,22 @@ type Iterator[T any] struct {
 	index int
 }
 
-// Return the pointer to the value.
+// Return the value.
 //
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (i *Iterator[T]) Get() *T {
-	return &(*i.arr)[i.index]
+func (i *Iterator[T]) Get() T {
+	return (*i.arr)[i.index]
+}
+
+// Set the value.
+//
+// time complexity: O(1)
+//
+// space complexity: O(1)
+func (i *Iterator[T]) Set(value T) {
+	(*i.arr)[i.index] = value
 }
 
 // Advance the iterator.

@@ -57,7 +57,7 @@ func TestSinglyLinkedList_Begin(t *testing.T) {
 	list.PushFront(2)
 
 	iterator := list.Begin()
-	if value := *iterator.Get(); value != 2 {
+	if value := iterator.Get(); value != 2 {
 		t.Errorf("Begin().Get() = %d, want %d", value, 2)
 	}
 }
@@ -77,8 +77,8 @@ func TestSinglyLinkedList_Insert(t *testing.T) {
 		t.Errorf("SinglyLinkedList.Len() = %d, want 2", len)
 	}
 
-	if iter := list.Begin(); *iter.Get() != 0 {
-		t.Errorf("Iterator.Get() = %d, want 0", *iter.Get())
+	if iter := list.Begin(); iter.Get() != 0 {
+		t.Errorf("Iterator.Get() = %d, want 0", iter.Get())
 	}
 
 	// Test case 3: Insert at the end
@@ -89,8 +89,8 @@ func TestSinglyLinkedList_Insert(t *testing.T) {
 	if len := list.Len(); len != 3 {
 		t.Errorf("SinglyLinkedList.Len() = %d, want 3", len)
 	}
-	if *end.Get() != 2 {
-		t.Errorf("Iterator.Get() = %d, want 2", *end.Get())
+	if end.Get() != 2 {
+		t.Errorf("Iterator.Get() = %d, want 2", end.Get())
 	}
 
 	// Test case 4: Insert in the middle
@@ -101,13 +101,13 @@ func TestSinglyLinkedList_Insert(t *testing.T) {
 		t.Errorf("SinglyLinkedList.Len() = %d, want 4", len)
 	}
 
-	expectedValues := []int{0, 1, 1, 2}
-	current := list.Begin()
-	for _, val := range expectedValues {
-		if *current.Get() != val {
-			t.Errorf("Iterator.Get() = %d, want %d", *current.Get(), val)
+	expected := []int{0, 1, 1, 2}
+	iter = list.Begin()
+	for _, val := range expected {
+		if iter.Get() != val {
+			t.Errorf("Iterator.Get() = %d, want %d", iter.Get(), val)
 		}
-		current.Next()
+		iter.Next()
 	}
 }
 
@@ -124,12 +124,12 @@ func TestSinglyLinkedList_Remove(t *testing.T) {
 	}
 
 	iter := list.Begin()
-	if *iter.Get() != 1 {
-		t.Errorf("Iterator.Get() = %d, want 1", *iter.Get())
+	if iter.Get() != 1 {
+		t.Errorf("Iterator.Get() = %d, want 1", iter.Get())
 	}
 	iter.Next()
-	if *iter.Get() != 2 {
-		t.Errorf("Iterator.Get() = %d, want 2", *iter.Get())
+	if iter.Get() != 2 {
+		t.Errorf("Iterator.Get() = %d, want 2", iter.Get())
 	}
 
 	// Test case 2: Remove from the middle
@@ -145,12 +145,12 @@ func TestSinglyLinkedList_Remove(t *testing.T) {
 	}
 
 	iter = list.Begin()
-	if *iter.Get() != 0 {
-		t.Errorf("Iterator.Get() = %d, want 0", *iter.Get())
+	if iter.Get() != 0 {
+		t.Errorf("Iterator.Get() = %d, want 0", iter.Get())
 	}
 	iter.Next()
-	if *iter.Get() != 2 {
-		t.Errorf("Iterator.Get() = %d, want 2", *iter.Get())
+	if iter.Get() != 2 {
+		t.Errorf("Iterator.Get() = %d, want 2", iter.Get())
 	}
 
 	// Test case 3: Remove from the end
@@ -167,12 +167,12 @@ func TestSinglyLinkedList_Remove(t *testing.T) {
 	}
 
 	iter = list.Begin()
-	if *iter.Get() != 0 {
-		t.Errorf("Iterator.Get() = %d, want 0", *iter.Get())
+	if iter.Get() != 0 {
+		t.Errorf("Iterator.Get() = %d, want 0", iter.Get())
 	}
 	iter.Next()
-	if *iter.Get() != 1 {
-		t.Errorf("Iterator.Get() = %d, want 1", *iter.Get())
+	if iter.Get() != 1 {
+		t.Errorf("Iterator.Get() = %d, want 1", iter.Get())
 	}
 
 	// Test case 4: Remove from a list with one element
@@ -237,10 +237,21 @@ func ExampleIterator_Get() {
 	list := SinglyLinkedList[int]{}
 	list.PushFront(5)
 	list.PushFront(3)
-	iterator := list.Begin()
-	value := iterator.Get()
-	fmt.Println(*value)
-	// Output: 3
+	iter := list.Begin()
+	fmt.Println(iter.Get())
+	// Output:
+	// 3
+}
+
+func ExampleIterator_Set() {
+	list := SinglyLinkedList[int]{}
+	list.PushFront(5)
+	list.PushFront(3)
+	iter := list.Begin()
+	iter.Set(10)
+	fmt.Println(iter.Get())
+	// Output:
+	// 10
 }
 
 func ExampleIterator_Next() {

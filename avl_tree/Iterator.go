@@ -5,13 +5,13 @@ type Iterator[T any] struct {
 	stack []*node[T]
 }
 
-// Return the pointer to the value.
+// Return the value.
 //
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (i *Iterator[T]) Get() *T {
-	return &i.stack[len(i.stack)-1].key
+func (i *Iterator[T]) Get() T {
+	return i.stack[len(i.stack)-1].key
 }
 
 // Add all the left child rooted at root to the stack.

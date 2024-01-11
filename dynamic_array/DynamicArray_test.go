@@ -94,13 +94,18 @@ func TestDynamicArray_Cap(t *testing.T) {
 
 func TestIterator_Get(t *testing.T) {
 	da := DynamicArray[int]{1, 2, 3}
-	iterator := Iterator[int]{arr: &da, index: 1}
+	iter := da.Begin()
+	if iter.Get() != 1 {
+		t.Errorf("Get() = %v, want %v", iter.Get(), 1)
+	}
+}
 
-	result := iterator.Get()
-	expected := &da[1]
-
-	if result != expected {
-		t.Errorf("Get() = %v, want %v", result, expected)
+func TestIterator_Set(t *testing.T) {
+	da := DynamicArray[int]{1, 2, 3}
+	iter := da.Begin()
+	iter.Set(10)
+	if iter.Get() != 10 {
+		t.Errorf("Get() = %v, want %v", iter.Get(), 10)
 	}
 }
 
@@ -143,16 +148,14 @@ func TestIterator_HasNext(t *testing.T) {
 
 func TestDynamicArray_Begin(t *testing.T) {
 	da := DynamicArray[int]{1, 2, 3}
-	iterator := da.Begin()
+	iter := da.Begin()
 
-	if iterator.index != 0 {
-		t.Errorf("Begin() resulted in index %v, want %v", iterator.index, 0)
+	if iter.index != 0 {
+		t.Errorf("Begin() resulted in index %v, want %v", iter.index, 0)
 	}
 
-	value := iterator.Get()
-	expectedValue := &da[0]
-	if value != expectedValue {
-		t.Errorf("Get() = %v, want %v", value, expectedValue)
+	if iter.Get() != da[0] {
+		t.Errorf("Get() = %v, want %v", iter.Get(), da[0])
 	}
 }
 
@@ -229,14 +232,16 @@ func ExampleDynamicArray_Cap() {
 	da.PushBack(99)
 
 	fmt.Println(da.Cap())
-	// Output: 4
+	// Output:
+	// 4
 }
 
 func ExampleDynamicArray_Begin() {
 	da := DynamicArray[int]{1, 2, 3}
-	iterator := da.Begin()
-	fmt.Print(*iterator.Get())
-	// Output: 1
+	iter := da.Begin()
+	fmt.Print(iter.Get())
+	// Output:
+	// 1
 }
 
 func ExampleDynamicArray_End() {
@@ -249,18 +254,19 @@ func ExampleDynamicArray_End() {
 func ExampleIterator() {
 	da := DynamicArray[int]{1, 2, 3}
 	for iter := da.Begin(); iter != da.End(); iter.Next() {
-		fmt.Println(*iter.Get())
+		fmt.Println(iter.Get())
+		iter.Set(iter.Get() * 2)
 	}
 
 	for iter := da.Begin(); iter.HasNext(); iter.Next() {
-		fmt.Println(*iter.Get())
+		fmt.Println(iter.Get())
 	}
 
 	// Output:
 	// 1
 	// 2
 	// 3
-	// 1
 	// 2
-	// 3
+	// 4
+	// 6
 }

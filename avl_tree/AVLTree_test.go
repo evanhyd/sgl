@@ -197,8 +197,8 @@ func TestIterator(t *testing.T) {
 
 	i := 0
 	for iter := tree.Begin(); iter.HasNext(); iter.Next() {
-		if *iter.Get() != i {
-			t.Errorf("Get() = %d, want %d", *iter.Get(), i)
+		if iter.Get() != i {
+			t.Errorf("Get() = %d, want %d", iter.Get(), i)
 		}
 		i++
 	}
@@ -303,7 +303,7 @@ func ExampleIterator() {
 	intTree.Insert(6)
 
 	for iter := intTree.Begin(); iter.HasNext(); iter.Next() {
-		fmt.Println(*iter.Get())
+		fmt.Println(iter.Get())
 	}
 	// Output:
 	// -436
