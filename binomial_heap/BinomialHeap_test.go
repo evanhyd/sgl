@@ -177,6 +177,59 @@ func TestBinomialHeap_Merge(t *testing.T) {
 	}
 }
 
+func BenchmarkBinomialHeap_Push_Small(b *testing.B) {
+	// int64
+	// BenchmarkBinomialHeap_Push_Small-16    	19541204	        55.06 ns/op	      24 B/op	       1 allocs/op
+	heap := BinomialHeap[int64]{Cmp: func(l, r int64) int { return int(l - r) }}
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		heap.Push(int64(i % 1024))
+	}
+}
+
+func BenchmarkBinomialHeap_Push_Big(b *testing.B) {
+	// [20]int64
+	// BenchmarkBinomialHeap_Push_Big-16    	 7704684	       141.6 ns/op	     176 B/op	       1 allocs/op
+
+	type Large [20]int64
+	heap := BinomialHeap[Large]{Cmp: func(l, r Large) int { return int(l[0] - r[0]) }}
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		heap.Push(Large{int64(i % 1024)})
+	}
+}
+
+func BenchmarkBinomialHeap_Pop_Small(b *testing.B) {
+	// int64
+	// BenchmarkBinomialHeap_Pop_Small-16    	 8985741	       251.9 ns/op	       0 B/op	       0 allocs/op
+	heap := BinomialHeap[int64]{Cmp: func(l, r int64) int { return int(l - r) }}
+	for i := 0; i < b.N; i++ {
+		heap.Push(int64(i % 1024))
+	}
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		heap.Pop()
+	}
+}
+
+func BenchmarkBinomialHeap_Pop_Big(b *testing.B) {
+	// [20]int64
+	// BenchmarkBinomialHeap_Pop_Big-16    	 3046507	       540.5 ns/op	       0 B/op	       0 allocs/op
+	type Large [20]int64
+	heap := BinomialHeap[Large]{Cmp: func(l, r Large) int { return int(l[0] - r[0]) }}
+	for i := 0; i < b.N; i++ {
+		heap.Push(Large{int64(i % 1024)})
+	}
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		heap.Pop()
+	}
+}
+
 func ExampleBinomialHeap_Len() {
 	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
 	fmt.Println(heap.Len())

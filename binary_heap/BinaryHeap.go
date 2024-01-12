@@ -110,8 +110,10 @@ func (b *BinaryHeap[T]) fixUp(child int) {
 func (b *BinaryHeap[T]) fixDown(root int) {
 	for i, j := root, len(b.slice)/2; i < j; {
 		child := b.left(i)
-		if r := child + 1; r < len(b.slice) && b.Cmp(b.slice[r], b.slice[child]) > 0 {
-			child = r
+		if r := child + 1; r < len(b.slice) {
+			if b.Cmp(b.slice[r], b.slice[child]) > 0 {
+				child = r
+			}
 		}
 
 		if b.Cmp(b.slice[child], b.slice[i]) > 0 {

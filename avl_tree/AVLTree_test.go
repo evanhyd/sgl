@@ -205,14 +205,13 @@ func TestIterator(t *testing.T) {
 }
 
 func BenchmarkAVLTree_Insert_Small(b *testing.B) {
-	// Note:
-	// Allocating slice brings a huge performance penalty.
-	// Recursion is consistently faster than the iterative array version.
-	//
 	// int64
 	// iterative slice: BenchmarkAVLTree_Insert_Small-16    	 3736772	       337.5 ns/op	     202 B/op	       2 allocs/op
 	// iterative array: BenchmarkAVLTree_Insert_Small-16    	 5551730	       236.3 ns/op	      32 B/op	       1 allocs/op
 	// recursion:       BenchmarkAVLTree_Insert_Small-16    	 5480019	       230.7 ns/op	      32 B/op	       1 allocs/op
+	//
+	// Allocating slice brings a huge performance penalty.
+	// Recursion is consistently faster than the iterative array version.
 
 	tree := AVLTree[int64]{Cmp: func(a, b int64) int { return int(a - b) }}
 	b.ResetTimer()
@@ -222,10 +221,9 @@ func BenchmarkAVLTree_Insert_Small(b *testing.B) {
 }
 
 func BenchmarkAVLTree_Insert_Big(b *testing.B) {
-	// Note:
 	// [20]int64
 	// iterative slice: BenchmarkAVLTree_Insert_Big-16    	 2328404	       492.9 ns/op	     358 B/op	       2 allocs/op
-	// iterative array: BenchmarkAVLTree_Insert_Big-16    	 2804586	       419.4 ns/op	     192 B/op	       1 allocs/op
+	// iterative array: BenchmarkAVLTree_Insert_Big-16    	 2671484	       430.6 ns/op	     192 B/op	       1 allocs/op
 	// recursion:       BenchmarkAVLTree_Insert_Big-16    	 2213972	       543.8 ns/op	     192 B/op	       1 allocs/op
 
 	type Large [20]int64
@@ -237,72 +235,75 @@ func BenchmarkAVLTree_Insert_Big(b *testing.B) {
 }
 
 func ExampleAVLTree_Insert() {
-	intTree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
-	intTree.Insert(10)
-	intTree.Insert(5)
-	intTree.Insert(15)
+	tree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	tree.Insert(10)
+	tree.Insert(5)
+	tree.Insert(15)
+	fmt.Println(tree.Len())
+	// Output:
+	// 3
 }
 
 func ExampleAVLTree_Contain() {
-	intTree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
-	intTree.Insert(10)
-	intTree.Insert(5)
-	intTree.Insert(15)
+	tree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	tree.Insert(10)
+	tree.Insert(5)
+	tree.Insert(15)
 
-	fmt.Println(intTree.Contain(5))
-	fmt.Println(intTree.Contain(6))
+	fmt.Println(tree.Contain(5))
+	fmt.Println(tree.Contain(6))
 	// Output:
 	// true
 	// false
 }
 
 func ExampleAVLTree_Remove() {
-	intTree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
-	intTree.Insert(10)
-	intTree.Insert(5)
-	intTree.Insert(15)
+	tree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	tree.Insert(10)
+	tree.Insert(5)
+	tree.Insert(15)
 
-	fmt.Println(intTree.Contain(5))
-	intTree.Remove(5)
-	fmt.Println(intTree.Contain(5))
+	fmt.Println(tree.Contain(5))
+	tree.Remove(5)
+	fmt.Println(tree.Contain(5))
 	// Output:
 	// true
 	// false
 }
 
 func ExampleAVLTree_Min() {
-	intTree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
-	intTree.Insert(10)
-	intTree.Insert(5)
-	intTree.Insert(15)
+	tree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	tree.Insert(10)
+	tree.Insert(5)
+	tree.Insert(15)
 
-	fmt.Println(intTree.Min())
+	fmt.Println(tree.Min())
 	// Output:
 	// 5
 }
 
 func ExampleAVLTree_Max() {
-	intTree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
-	intTree.Insert(10)
-	intTree.Insert(5)
-	intTree.Insert(15)
+	tree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	tree.Insert(10)
+	tree.Insert(5)
+	tree.Insert(15)
 
-	fmt.Println(intTree.Max())
+	fmt.Println(tree.Max())
 	// Output:
 	// 15
 }
 
 func ExampleIterator() {
-	intTree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
-	intTree.Insert(10)
-	intTree.Insert(-436)
-	intTree.Insert(5)
-	intTree.Insert(15)
-	intTree.Insert(12)
-	intTree.Insert(8)
-	intTree.Insert(6)
+	tree := AVLTree[int]{Cmp: func(a, b int) int { return a - b }}
+	tree.Insert(10)
+	tree.Insert(-436)
+	tree.Insert(5)
+	tree.Insert(15)
+	tree.Insert(12)
+	tree.Insert(8)
+	tree.Insert(6)
 
-	for iter := intTree.Begin(); iter.HasNext(); iter.Next() {
+	for iter := tree.Begin(); iter.HasNext(); iter.Next() {
 		fmt.Println(iter.Get())
 	}
 	// Output:

@@ -184,11 +184,62 @@ func TestIterator_HasNext(t *testing.T) {
 	checkHeapProperty(heap, t)
 }
 
-func BenchmarkBinomialHeap_Push_Small(b *testing.B) {
+func BenchmarkBinaryHeap_Push_Small(b *testing.B) {
+	// int64
+	// BenchmarkBinaryHeap_Push_Small-16    	63683304	        16.21 ns/op	      46 B/op	       0 allocs/op
+	heap := BinaryHeap[int64]{Cmp: func(l, r int64) int { return int(l - r) }}
+	b.ResetTimer()
 
+	for i := 0; i < b.N; i++ {
+		heap.Push(int64(i % 1024))
+	}
 }
 
-func ExampleMake() {
+func BenchmarkBinaryHeap_Push_Big(b *testing.B) {
+	// [20]int64
+	// BenchmarkBinaryHeap_Push_Big-16    	 4488074	       273.3 ns/op	     996 B/op	       0 allocs/op
+	// the speed range from 170 ~ 270 ns/op, might be due to cache loss, needs investigation
+
+	type Large [20]int64
+	heap := BinaryHeap[Large]{Cmp: func(l, r Large) int { return int(l[0] - r[0]) }}
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		heap.Push(Large{int64(i % 1024)})
+	}
+}
+
+func BenchmarkBinaryHeap_Pop_Small(b *testing.B) {
+	// int64
+	// BenchmarkBinaryHeap_Pop_Small-16    	 7645639	       262.3 ns/op	       0 B/op	       0 allocs/op
+	heap := BinaryHeap[int64]{Cmp: func(l, r int64) int { return int(l - r) }}
+	for i := 0; i < b.N; i++ {
+		heap.Push(int64(i % 1024))
+	}
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		heap.Pop()
+	}
+}
+
+func BenchmarkBinaryHeap_Pop_Big(b *testing.B) {
+	// [20]int64
+	// BenchmarkBinaryHeap_Pop_Big-16    	 1000000	      1524 ns/op	       0 B/op	       0 allocs/op
+	// HUH??????????
+	type Large [20]int64
+	heap := BinaryHeap[Large]{Cmp: func(l, r Large) int { return int(l[0] - r[0]) }}
+	for i := 0; i < b.N; i++ {
+		heap.Push(Large{int64(i % 1024)})
+	}
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		heap.Pop()
+	}
+}
+
+func ExampleHeapify() {
 	// Create a max heap from a slice
 	slice := []int{4, 2, 7, 1, 9, 5}
 	maxHeap := Heapify(slice, func(i, j int) int { return i - j })
