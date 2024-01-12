@@ -1,4 +1,4 @@
-package singlylinkedlist
+package singly_linkedlist
 
 // A singly linked list iterator that traverse elements by chaining order.
 type Iterator[T any] struct {

@@ -7,16 +7,16 @@ type Iterator[T any] struct {
 }
 
 // Create a binary heap iterator.
-func make[T any, C func(T, T) int](heap *BinaryHeap[T]) Iterator[T] {
+func newIterator[T any, C func(T, T) int](heap *BinaryHeap[T]) Iterator[T] {
 	iter := Iterator[T]{
 		heap,
-		BinaryHeap[int]{nil, func(i, j int) int {
+		BinaryHeap[int]{Cmp: func(i, j int) int {
 			return heap.Cmp(heap.slice[i], heap.slice[j])
 		}},
 	}
 
 	if heap.Len() > 0 {
-		iter.queue.slice = []int{0}
+		iter.queue.Push(0)
 	}
 	return iter
 }
@@ -36,7 +36,7 @@ func (i *Iterator[T]) Get() T {
 //
 // space complexity: O(1)
 //
-// To traverse through the entire heap.
+// The cost of traversing through the entire heap:
 //
 // Let n be the number of times we call Next().
 // At n-th times, there are n elements in the priority queue.

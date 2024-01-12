@@ -2,6 +2,8 @@ package binomial_heap
 
 import (
 	"math/bits"
+
+	"github.com/evanhyd/sgl/adt"
 )
 
 type flagTree[T any] struct {
@@ -13,11 +15,15 @@ type flagTree[T any] struct {
 // A max binomial heap.
 //
 // It has higher constant for insert and pop, but supports merging in O(log(len)).
+//
+// interface: PriorityQueue
 type BinomialHeap[T any] struct {
 	trees []*flagTree[T]
 	Cmp   func(T, T) int
 	len   int
 }
+
+var _ adt.PriorityQueue[int] = &BinomialHeap[int]{}
 
 // Return the number of element.
 //

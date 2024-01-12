@@ -184,6 +184,10 @@ func TestIterator_HasNext(t *testing.T) {
 	checkHeapProperty(heap, t)
 }
 
+func BenchmarkBinomialHeap_Push_Small(b *testing.B) {
+
+}
+
 func ExampleMake() {
 	// Create a max heap from a slice
 	slice := []int{4, 2, 7, 1, 9, 5}

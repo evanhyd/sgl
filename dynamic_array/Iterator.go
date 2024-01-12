@@ -33,6 +33,15 @@ func (i *Iterator[T]) Next() {
 	i.index++
 }
 
+// Advance the iterator by n position.
+//
+// time complexity: O(1)
+//
+// space complexity: O(1)
+func (i *Iterator[T]) Advance(n int) {
+	i.index += n
+}
+
 // Return true if can advance.
 //
 // time complexity: O(1)

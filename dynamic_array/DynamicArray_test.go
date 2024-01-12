@@ -92,6 +92,29 @@ func TestDynamicArray_Cap(t *testing.T) {
 	}
 }
 
+func TestDynamicArray_Begin(t *testing.T) {
+	da := DynamicArray[int]{1, 2, 3}
+	iter := da.Begin()
+
+	if iter.index != 0 {
+		t.Errorf("Begin() resulted in index %v, want %v", iter.index, 0)
+	}
+
+	if iter.Get() != da[0] {
+		t.Errorf("Get() = %v, want %v", iter.Get(), da[0])
+	}
+}
+
+func TestDynamicArray_End(t *testing.T) {
+	da := DynamicArray[int]{1, 2, 3}
+	iterator := da.End()
+
+	// Verify that End() returns an iterator one pass the last element
+	if iterator.index != len(da) {
+		t.Errorf("TestDynamicArray_End: End() did not return an iterator one pass the last element")
+	}
+}
+
 func TestIterator_Get(t *testing.T) {
 	da := DynamicArray[int]{1, 2, 3}
 	iter := da.Begin()
@@ -125,47 +148,27 @@ func TestIterator_Next(t *testing.T) {
 
 func TestIterator_HasNext(t *testing.T) {
 	da := DynamicArray[int]{1, 2, 3}
-	iterator := Iterator[int]{arr: &da, index: 1}
+	iter := Iterator[int]{arr: &da, index: 1}
 
-	result := iterator.HasNext()
-	expected := true
-
-	if result != expected {
-		t.Errorf("HasNext() = %v, want %v", result, expected)
+	if result := iter.HasNext(); result != true {
+		t.Errorf("HasNext() = %v, want %v", result, true)
 	}
 
 	// Advance the iterator to the last element
-	iterator.Next()
-	iterator.Next()
-
-	result = iterator.HasNext()
-	expected = false
-
-	if result != expected {
-		t.Errorf("HasNext() = %v, want %v", result, expected)
+	iter.Next()
+	iter.Next()
+	if result := iter.HasNext(); result != false {
+		t.Errorf("HasNext() = %v, want %v", result, false)
 	}
 }
 
-func TestDynamicArray_Begin(t *testing.T) {
+func TestIterator_Advance(t *testing.T) {
 	da := DynamicArray[int]{1, 2, 3}
 	iter := da.Begin()
+	iter.Advance(2)
 
-	if iter.index != 0 {
-		t.Errorf("Begin() resulted in index %v, want %v", iter.index, 0)
-	}
-
-	if iter.Get() != da[0] {
-		t.Errorf("Get() = %v, want %v", iter.Get(), da[0])
-	}
-}
-
-func TestDynamicArray_End(t *testing.T) {
-	da := DynamicArray[int]{1, 2, 3}
-	iterator := da.End()
-
-	// Verify that End() returns an iterator one pass the last element
-	if iterator.index != len(da) {
-		t.Errorf("TestDynamicArray_End: End() did not return an iterator one pass the last element")
+	if result := iter.Get(); result != 3 {
+		t.Errorf("Get() = %v, want %v", result, 3)
 	}
 }
 

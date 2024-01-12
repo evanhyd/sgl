@@ -1,4 +1,4 @@
-package singlylinkedlist
+package singly_linkedlist
 
 type node[T any] struct {
 	value T

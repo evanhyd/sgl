@@ -1,10 +1,16 @@
 package binary_heap
 
+import "github.com/evanhyd/sgl/adt"
+
 // A max binary heap.
+//
+// interface: PriorityQueue
 type BinaryHeap[T any] struct {
 	slice []T
 	Cmp   func(T, T) int
 }
+
+var _ adt.PriorityQueue[int] = &BinaryHeap[int]{}
 
 // Heapify the slice using cmp as predicate.
 //
@@ -76,7 +82,7 @@ func (b *BinaryHeap[T]) Top() T {
 //
 // space complexity: O(1)
 func (d *BinaryHeap[T]) Begin() Iterator[T] {
-	return make[T](d)
+	return newIterator(d)
 }
 
 // Fix the heap property start from child upward.
