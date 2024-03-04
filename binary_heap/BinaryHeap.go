@@ -108,17 +108,18 @@ func (b *BinaryHeap[T]) fixUp(child int) {
 //
 // space complexity: O(1)
 func (b *BinaryHeap[T]) fixDown(root int) {
-	for i, j := root, len(b.slice)/2; i < j; {
-		child := b.left(i)
+	for end := len(b.slice) / 2; root < end; {
+		child := b.left(root)
+
 		if r := child + 1; r < len(b.slice) {
 			if b.Cmp(b.slice[r], b.slice[child]) > 0 {
 				child = r
 			}
 		}
 
-		if b.Cmp(b.slice[child], b.slice[i]) > 0 {
-			b.slice[i], b.slice[child] = b.slice[child], b.slice[i]
-			i = child
+		if b.Cmp(b.slice[child], b.slice[root]) > 0 {
+			b.slice[root], b.slice[child] = b.slice[child], b.slice[root]
+			root = child
 		} else {
 			break
 		}
