@@ -6,7 +6,7 @@ import (
 )
 
 func TestBinomialHeap_Len(t *testing.T) {
-	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap := New(func(a, b int) int { return a - b })
 	// Test Len on an empty heap
 	if len := heap.Len(); len != 0 {
 		t.Errorf("Len() = %d, want 0", len)
@@ -22,7 +22,7 @@ func TestBinomialHeap_Len(t *testing.T) {
 }
 
 func TestBinomialHeap_Push(t *testing.T) {
-	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap := New(func(a, b int) int { return a - b })
 	// Test Push and Top
 	heap.Push(5)
 	if top := heap.Top(); top != 5 {
@@ -30,7 +30,7 @@ func TestBinomialHeap_Push(t *testing.T) {
 	}
 
 	// Test Push on an empty heap
-	heap = BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap = New(func(a, b int) int { return a - b })
 	heap.Push(10)
 	if top := heap.Top(); top != 10 {
 		t.Errorf("Top() = %d, want 10", top)
@@ -44,7 +44,7 @@ func TestBinomialHeap_Push(t *testing.T) {
 	}
 
 	// Test Push with elements in descending order
-	descHeap := BinomialHeap[int]{Cmp: func(a, b int) int { return b - a }}
+	descHeap := New(func(a, b int) int { return b - a })
 	descHeap.Push(20)
 	descHeap.Push(15)
 	descHeap.Push(10)
@@ -53,7 +53,7 @@ func TestBinomialHeap_Push(t *testing.T) {
 	}
 
 	// Test Push with repeated elements
-	repeatHeap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	repeatHeap := New(func(a, b int) int { return a - b })
 	repeatHeap.Push(5)
 	repeatHeap.Push(5)
 	repeatHeap.Push(5)
@@ -62,7 +62,7 @@ func TestBinomialHeap_Push(t *testing.T) {
 	}
 
 	// Test Push with lots of elements
-	bigHeap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	bigHeap := New(func(a, b int) int { return a - b })
 	for i := 0; i < 100; i++ {
 		bigHeap.Push(i)
 	}
@@ -78,7 +78,7 @@ func TestBinomialHeap_Push(t *testing.T) {
 }
 
 func TestBinomialHeap_Pop(t *testing.T) {
-	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap := New(func(a, b int) int { return a - b })
 
 	// Test Pop after pushing elements
 	heap.Push(5)
@@ -101,7 +101,7 @@ func TestBinomialHeap_Pop(t *testing.T) {
 }
 
 func TestBinomialHeap_Top(t *testing.T) {
-	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap := New(func(a, b int) int { return a - b })
 
 	// Test Top after pushing elements
 	heap.Push(5)
@@ -120,11 +120,11 @@ func TestBinomialHeap_Top(t *testing.T) {
 
 func TestBinomialHeap_Merge(t *testing.T) {
 	// Test Merge with two non-empty heaps
-	heap1 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap1 := New(func(a, b int) int { return a - b })
 	heap1.Push(5)
 	heap1.Push(3)
 
-	heap2 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap2 := New(func(a, b int) int { return a - b })
 	heap2.Push(10)
 	heap2.Push(8)
 
@@ -138,11 +138,11 @@ func TestBinomialHeap_Merge(t *testing.T) {
 	}
 
 	// Test Merge with one empty heap
-	heap3 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap3 := New(func(a, b int) int { return a - b })
 	heap3.Push(2)
 	heap3.Push(4)
 
-	heap4 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap4 := New(func(a, b int) int { return a - b })
 	heap4.Merge(heap3)
 
 	if len := heap4.Len(); len != 2 {
@@ -153,8 +153,8 @@ func TestBinomialHeap_Merge(t *testing.T) {
 	}
 
 	// Test merge two big heaps
-	bigHeap1 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
-	bigHeap2 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	bigHeap1 := New(func(a, b int) int { return a - b })
+	bigHeap2 := New(func(a, b int) int { return a - b })
 	for i := -100; i < 0; i++ {
 		bigHeap1.Push(i)
 	}
@@ -178,8 +178,10 @@ func TestBinomialHeap_Merge(t *testing.T) {
 }
 
 // BenchmarkBinomialHeap_Push_Small-16    	20313676	        54.18 ns/op	      24 B/op	       1 allocs/op
+// BenchmarkBinomialHeap_Push_Small-16    	20318802	        54.92 ns/op	      24 B/op	       1 allocs/op
+// BenchmarkBinomialHeap_Push_Small-16    	20952902	        54.23 ns/op	      24 B/op	       1 allocs/op
 func BenchmarkBinomialHeap_Push_Small(b *testing.B) {
-	heap := BinomialHeap[int64]{Cmp: func(l, r int64) int { return int(l - r) }}
+	heap := New(func(a, b int64) int { return int(a - b) })
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
@@ -187,13 +189,15 @@ func BenchmarkBinomialHeap_Push_Small(b *testing.B) {
 	}
 }
 
-// BenchmarkBinomialHeap_Push_Big-16    	 6852475	       147.5 ns/op	     192 B/op	       1 allocs/op
+// BenchmarkBinomialHeap_Push_Big-16    	 6652496	       155.1 ns/op	     192 B/op	       1 allocs/op
+// BenchmarkBinomialHeap_Push_Big-16    	 7082900	       155.4 ns/op	     192 B/op	       1 allocs/op
+// BenchmarkBinomialHeap_Push_Big-16    	 7065980	       162.4 ns/op	     192 B/op	       1 allocs/op
 func BenchmarkBinomialHeap_Push_Big(b *testing.B) {
 	type Large struct {
 		a int64
 		b [20]int64
 	}
-	heap := BinomialHeap[Large]{Cmp: func(l, r Large) int { return int(l.a - r.a) }}
+	heap := New(func(l, r Large) int { return int(l.a - r.a) })
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
@@ -202,8 +206,10 @@ func BenchmarkBinomialHeap_Push_Big(b *testing.B) {
 }
 
 // BenchmarkBinomialHeap_Pop_Small-16    	 8291036	       154.5 ns/op	       0 B/op	       0 allocs/op
+// BenchmarkBinomialHeap_Pop_Small-16    	 8219092	       154.3 ns/op	       0 B/op	       0 allocs/op
+// BenchmarkBinomialHeap_Pop_Small-16    	 7941328	       168.3 ns/op	       0 B/op	       0 allocs/op
 func BenchmarkBinomialHeap_Pop_Small(b *testing.B) {
-	heap := BinomialHeap[int64]{Cmp: func(l, r int64) int { return int(l - r) }}
+	heap := New(func(a, b int64) int { return int(a - b) })
 	for i := 0; i < b.N; i++ {
 		heap.Push(int64(i % (b.N/100 + 1)))
 	}
@@ -215,12 +221,14 @@ func BenchmarkBinomialHeap_Pop_Small(b *testing.B) {
 }
 
 // BenchmarkBinomialHeap_Pop_Big-16    	 6747440	       187.2 ns/op	       0 B/op	       0 allocs/op
+// BenchmarkBinomialHeap_Pop_Big-16    	 6791820	       191.1 ns/op	       0 B/op	       0 allocs/op
+// BenchmarkBinomialHeap_Pop_Big-16    	 5617261	       193.4 ns/op	       0 B/op	       0 allocs/op
 func BenchmarkBinomialHeap_Pop_Big(b *testing.B) {
 	type Large struct {
 		a int64
 		b [20]int64
 	}
-	heap := BinomialHeap[*Large]{Cmp: func(l, r *Large) int { return int(l.a - r.a) }}
+	heap := New(func(l, r *Large) int { return int(l.a - r.a) })
 	for i := 0; i < b.N; i++ {
 		heap.Push(&Large{a: int64(i % (b.N/100 + 1))})
 	}
@@ -232,7 +240,7 @@ func BenchmarkBinomialHeap_Pop_Big(b *testing.B) {
 }
 
 func ExampleBinomialHeap_Len() {
-	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap := New(func(a, b int) int { return a - b })
 	fmt.Println(heap.Len())
 	heap.Push(123)
 	fmt.Println(heap.Len())
@@ -243,7 +251,7 @@ func ExampleBinomialHeap_Len() {
 }
 
 func ExampleBinomialHeap_Push() {
-	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap := New(func(a, b int) int { return a - b })
 	heap.Push(5)
 	heap.Push(3)
 	heap.Push(7)
@@ -258,7 +266,7 @@ func ExampleBinomialHeap_Push() {
 }
 
 func ExampleBinomialHeap_Pop() {
-	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap := New(func(a, b int) int { return a - b })
 	heap.Push(5)
 	heap.Push(3)
 	heap.Push(7)
@@ -271,7 +279,7 @@ func ExampleBinomialHeap_Pop() {
 }
 
 func ExampleBinomialHeap_Top() {
-	heap := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap := New(func(a, b int) int { return a - b })
 	heap.Push(5)
 	heap.Push(3)
 	heap.Push(7)
@@ -281,11 +289,11 @@ func ExampleBinomialHeap_Top() {
 
 func ExampleBinomialHeap_Merge() {
 	// Merge two binomial heaps and print the top element after merging
-	heap1 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap1 := New(func(a, b int) int { return a - b })
 	heap1.Push(5)
 	heap1.Push(3)
 
-	heap2 := BinomialHeap[int]{Cmp: func(a, b int) int { return a - b }}
+	heap2 := New(func(a, b int) int { return a - b })
 	heap2.Push(10)
 	heap2.Push(8)
 

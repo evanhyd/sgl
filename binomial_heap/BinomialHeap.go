@@ -19,11 +19,15 @@ type flagTree[T any] struct {
 // interface: PriorityQueue
 type BinomialHeap[T any] struct {
 	trees []*flagTree[T]
-	Cmp   func(T, T) int
+	cmp   func(T, T) int
 	len   int
 }
 
 var _ adt.PriorityQueue[int] = &BinomialHeap[int]{}
+
+func New[T any](predicate func(T, T) int) BinomialHeap[T] {
+	return BinomialHeap[T]{cmp: predicate}
+}
 
 // Return the number of element.
 //
@@ -97,7 +101,7 @@ func (b *BinomialHeap[T]) Merge(heap BinomialHeap[T]) {
 func (b *BinomialHeap[T]) max() int {
 	m := -1
 	for i, tree := range b.trees {
-		if tree != nil && (m == -1 || b.Cmp(b.trees[i].key, b.trees[m].key) > 0) {
+		if tree != nil && (m == -1 || b.cmp(b.trees[i].key, b.trees[m].key) > 0) {
 			m = i
 		}
 	}
@@ -132,7 +136,7 @@ func (b *BinomialHeap[T]) mergeTree(tree *flagTree[T], height int) {
 		}
 		b.trees[height] = nil
 
-		if b.Cmp(t.key, tree.key) > 0 {
+		if b.cmp(t.key, tree.key) > 0 {
 			tree, t = t, tree
 		}
 		tree.left, t.right = t, tree.left
