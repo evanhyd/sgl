@@ -6,7 +6,7 @@ import (
 )
 
 func TestSinglyLinkedList_Len(t *testing.T) {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	if len := list.Len(); len != 0 {
 		t.Errorf("Len() = %d, want %d", len, 0)
 	}
@@ -23,7 +23,7 @@ func TestSinglyLinkedList_Len(t *testing.T) {
 }
 
 func TestSinglyLinkedList_PushFront(t *testing.T) {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	list.PushFront(1)
 	if len := list.Len(); len != 1 {
 		t.Errorf("Len() = %d, want %d", len, 1)
@@ -36,7 +36,7 @@ func TestSinglyLinkedList_PushFront(t *testing.T) {
 }
 
 func TestSinglyLinkedList_PopFront(t *testing.T) {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	list.PushFront(1)
 	list.PushFront(2)
 
@@ -52,7 +52,7 @@ func TestSinglyLinkedList_PopFront(t *testing.T) {
 }
 
 func TestSinglyLinkedList_Begin(t *testing.T) {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	list.PushFront(1)
 	list.PushFront(2)
 
@@ -63,7 +63,7 @@ func TestSinglyLinkedList_Begin(t *testing.T) {
 }
 
 func TestSinglyLinkedList_Insert(t *testing.T) {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 
 	// Test case 1: Insert into an empty list
 	list.Insert(list.Begin(), 1)
@@ -114,7 +114,7 @@ func TestSinglyLinkedList_Insert(t *testing.T) {
 func TestSinglyLinkedList_Remove(t *testing.T) {
 
 	// Test case 1: Remove from the beginning
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	list.PushFront(2)
 	list.PushFront(1)
 	list.PushFront(0)
@@ -133,7 +133,7 @@ func TestSinglyLinkedList_Remove(t *testing.T) {
 	}
 
 	// Test case 2: Remove from the middle
-	list = SinglyLinkedList[int]{}
+	list = New[int]()
 	list.PushFront(2)
 	list.PushFront(1)
 	list.PushFront(0)
@@ -154,7 +154,7 @@ func TestSinglyLinkedList_Remove(t *testing.T) {
 	}
 
 	// Test case 3: Remove from the end
-	list = SinglyLinkedList[int]{}
+	list = New[int]()
 	list.PushFront(2)
 	list.PushFront(1)
 	list.PushFront(0)
@@ -176,7 +176,7 @@ func TestSinglyLinkedList_Remove(t *testing.T) {
 	}
 
 	// Test case 4: Remove from a list with one element
-	list = SinglyLinkedList[int]{}
+	list = New[int]()
 	list.PushFront(123)
 	list.Remove(list.Begin())
 	if len := list.Len(); len != 0 {
@@ -185,7 +185,7 @@ func TestSinglyLinkedList_Remove(t *testing.T) {
 }
 
 func TestIterator_HasNext(t *testing.T) {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	iterator := list.Begin()
 	if hasNext := iterator.HasNext(); hasNext {
 		t.Errorf("HasNext() = %t, want %t", hasNext, false)
@@ -199,14 +199,14 @@ func TestIterator_HasNext(t *testing.T) {
 }
 
 func ExampleSinglyLinkedList_PushFront() {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	list.PushFront(42)
 	fmt.Println(list.Len())
 	// Output: 1
 }
 
 func ExampleSinglyLinkedList_PopFront() {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	list.PushFront(42)
 	list.PopFront()
 	fmt.Println(list.Len())
@@ -214,7 +214,7 @@ func ExampleSinglyLinkedList_PopFront() {
 }
 
 func ExampleSinglyLinkedList_Insert() {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	iterator := list.Begin()
 	list.Insert(iterator, 10)
 	fmt.Println(list.Len())
@@ -222,7 +222,7 @@ func ExampleSinglyLinkedList_Insert() {
 }
 
 func ExampleSinglyLinkedList_Remove() {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	iterator := list.Begin()
 	list.Insert(iterator, 10)
 	fmt.Println(list.Len())
@@ -234,7 +234,7 @@ func ExampleSinglyLinkedList_Remove() {
 }
 
 func ExampleIterator_Get() {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	list.PushFront(5)
 	list.PushFront(3)
 	iter := list.Begin()
@@ -244,7 +244,7 @@ func ExampleIterator_Get() {
 }
 
 func ExampleIterator_Set() {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	list.PushFront(5)
 	list.PushFront(3)
 	iter := list.Begin()
@@ -255,7 +255,7 @@ func ExampleIterator_Set() {
 }
 
 func ExampleIterator_Next() {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	list.PushFront(5)
 	list.PushFront(3)
 	iterator := list.Begin()
@@ -265,7 +265,7 @@ func ExampleIterator_Next() {
 }
 
 func ExampleIterator_HasNext() {
-	list := SinglyLinkedList[int]{}
+	list := New[int]()
 	list.PushFront(5)
 	list.PushFront(3)
 	iterator := list.Begin()

@@ -11,6 +11,10 @@ type SinglyLinkedList[T any] struct {
 	len  int
 }
 
+func New[T any]() SinglyLinkedList[T] {
+	return SinglyLinkedList[T]{}
+}
+
 // Return the number of element.
 //
 // time complexity: O(1)
