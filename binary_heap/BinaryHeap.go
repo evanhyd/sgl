@@ -7,10 +7,14 @@ import "github.com/evanhyd/sgl/adt"
 // interface: PriorityQueue
 type BinaryHeap[T any] struct {
 	slice []T
-	Cmp   func(T, T) int
+	cmp   func(T, T) int
 }
 
 var _ adt.PriorityQueue[int] = &BinaryHeap[int]{}
+
+func New[T any](predicate func(T, T) int) BinaryHeap[T] {
+	return BinaryHeap[T]{cmp: predicate}
+}
 
 // Heapify the slice using cmp as predicate.
 //
@@ -93,7 +97,7 @@ func (d *BinaryHeap[T]) Begin() Iterator[T] {
 func (b *BinaryHeap[T]) fixUp(child int) {
 	for i := child; i > 0; {
 		p := b.parent(i)
-		if b.Cmp(b.slice[i], b.slice[p]) > 0 {
+		if b.cmp(b.slice[i], b.slice[p]) > 0 {
 			b.slice[i], b.slice[p] = b.slice[p], b.slice[i]
 			i = p
 		} else {
@@ -112,12 +116,12 @@ func (b *BinaryHeap[T]) fixDown(root int) {
 		child := b.left(root)
 
 		if r := child + 1; r < len(b.slice) {
-			if b.Cmp(b.slice[r], b.slice[child]) > 0 {
+			if b.cmp(b.slice[r], b.slice[child]) > 0 {
 				child = r
 			}
 		}
 
-		if b.Cmp(b.slice[child], b.slice[root]) > 0 {
+		if b.cmp(b.slice[child], b.slice[root]) > 0 {
 			b.slice[root], b.slice[child] = b.slice[child], b.slice[root]
 			root = child
 		} else {

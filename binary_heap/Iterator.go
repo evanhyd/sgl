@@ -10,8 +10,8 @@ type Iterator[T any] struct {
 func newIterator[T any, C func(T, T) int](heap *BinaryHeap[T]) Iterator[T] {
 	iter := Iterator[T]{
 		heap,
-		BinaryHeap[int]{Cmp: func(i, j int) int {
-			return heap.Cmp(heap.slice[i], heap.slice[j])
+		BinaryHeap[int]{cmp: func(i, j int) int {
+			return heap.cmp(heap.slice[i], heap.slice[j])
 		}},
 	}
 

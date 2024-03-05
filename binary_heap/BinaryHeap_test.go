@@ -11,21 +11,30 @@ func checkHeapProperty[T any, C func(T, T) int](heap BinaryHeap[T], t *testing.T
 		left := heap.left(i)
 		right := left + 1
 
-		if left < heap.Len() && heap.Cmp(heap.slice[left], heap.slice[i]) > 0 {
+		if left < heap.Len() && heap.cmp(heap.slice[left], heap.slice[i]) > 0 {
 			t.Errorf("Heap property violated at index %d and %d", i, left)
 		}
 
-		if right < heap.Len() && heap.Cmp(heap.slice[right], heap.slice[i]) > 0 {
+		if right < heap.Len() && heap.cmp(heap.slice[right], heap.slice[i]) > 0 {
 			t.Errorf("Heap property violated at index %d and %d", i, right)
 		}
 	}
 }
 
+func TestNew(t *testing.T) {
+	slice := []int{3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5}
+	cmp := func(a, b int) int { return a - b }
+	heap := New(cmp)
+	for _, n := range slice {
+		heap.Push(n)
+	}
+
+	checkHeapProperty(heap, t)
+}
 func TestHeapify(t *testing.T) {
 	slice := []int{3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5}
 	cmp := func(a, b int) int { return a - b }
 	heap := Heapify(slice, cmp)
-
 	checkHeapProperty(heap, t)
 }
 
@@ -181,9 +190,11 @@ func TestIterator_HasNext(t *testing.T) {
 	checkHeapProperty(heap, t)
 }
 
-// BenchmarkBinaryHeap_Push_Small-16    	51082305	        22.27 ns/op	      45 B/op	       0 allocs/op
+// BenchmarkBinaryHeap_Push_Small-16    	51245478	        22.89 ns/op	      45 B/op	       0 allocs/op
+// BenchmarkBinaryHeap_Push_Small-16    	50764212	        22.32 ns/op	      46 B/op	       0 allocs/op
+// BenchmarkBinaryHeap_Push_Small-16    	49751242	        22.80 ns/op	      47 B/op	       0 allocs/op
 func BenchmarkBinaryHeap_Push_Small(b *testing.B) {
-	heap := BinaryHeap[int64]{Cmp: func(l, r int64) int { return int(l - r) }}
+	heap := New(func(l, r int64) int { return int(l - r) })
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
@@ -191,13 +202,15 @@ func BenchmarkBinaryHeap_Push_Small(b *testing.B) {
 	}
 }
 
-// BenchmarkBinaryHeap_Push_Big-16    	 7121695	       144.8 ns/op	     220 B/op	       1 allocs/o
+// BenchmarkBinaryHeap_Push_Big-16    	 7538895	       142.9 ns/op	     217 B/op	       1 allocs/op
+// BenchmarkBinaryHeap_Push_Big-16    	 7382865	       154.2 ns/op	     218 B/op	       1 allocs/op
+// BenchmarkBinaryHeap_Push_Big-16    	 7348918	       148.1 ns/op	     218 B/op	       1 allocs/op
 func BenchmarkBinaryHeap_Push_Big(b *testing.B) {
 	type Large struct {
 		a int64
 		_ [20]int64
 	}
-	heap := BinaryHeap[*Large]{Cmp: func(l, r *Large) int { return int(l.a - r.a) }}
+	heap := New(func(l, r *Large) int { return int(l.a - r.a) })
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
@@ -207,7 +220,7 @@ func BenchmarkBinaryHeap_Push_Big(b *testing.B) {
 
 // BenchmarkBinaryHeap_Pop_Small-16    	 5932274	       210.9 ns/op	       0 B/op	       0 allocs/op
 func BenchmarkBinaryHeap_Pop_Small(b *testing.B) {
-	heap := BinaryHeap[int64]{Cmp: func(l, r int64) int { return int(l - r) }}
+	heap := BinaryHeap[int64]{cmp: func(l, r int64) int { return int(l - r) }}
 	for i := 0; i < b.N; i++ {
 		heap.Push(int64(i % (b.N/100 + 1)))
 	}
@@ -224,7 +237,7 @@ func BenchmarkBinaryHeap_Pop_Big(b *testing.B) {
 		a int64
 		_ [20]int64
 	}
-	heap := BinaryHeap[*Large]{Cmp: func(l, r *Large) int { return int(l.a - r.a) }}
+	heap := BinaryHeap[*Large]{cmp: func(l, r *Large) int { return int(l.a - r.a) }}
 	for i := 0; i < b.N; i++ {
 		heap.Push(&Large{a: int64(i % (b.N/100 + 1))})
 	}
@@ -233,6 +246,17 @@ func BenchmarkBinaryHeap_Pop_Big(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		heap.Pop()
 	}
+}
+
+func ExampleNew() {
+	// Create a max heap
+	slice := []int{4, 2, 7, 1, 9, 5}
+	maxHeap := New(func(i, j int) int { return i - j })
+	for _, n := range slice {
+		maxHeap.Push(n)
+	}
+	fmt.Println(maxHeap.slice)
+	// Output: [9 7 5 1 2 4]
 }
 
 func ExampleHeapify() {
