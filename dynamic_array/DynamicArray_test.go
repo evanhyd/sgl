@@ -7,8 +7,7 @@ import (
 )
 
 func TestDynamicArray_PushBack(t *testing.T) {
-	da := make(DynamicArray[int], 0)
-
+	da := New[int]()
 	da.PushBack(42)
 	da.PushBack(12)
 	da.PushBack(99)
@@ -21,8 +20,7 @@ func TestDynamicArray_PushBack(t *testing.T) {
 }
 
 func TestDynamicArray_PopBack(t *testing.T) {
-	da := make(DynamicArray[int], 0)
-
+	da := New[int]()
 	da.PushBack(42)
 	da.PushBack(12)
 	da.PushBack(99)
@@ -37,7 +35,7 @@ func TestDynamicArray_PopBack(t *testing.T) {
 }
 
 func TestDynamicArray_Front(t *testing.T) {
-	da := make(DynamicArray[int], 0)
+	da := New[int]()
 
 	da.PushBack(42)
 	da.PushBack(12)
@@ -51,7 +49,7 @@ func TestDynamicArray_Front(t *testing.T) {
 }
 
 func TestDynamicArray_Back(t *testing.T) {
-	da := make(DynamicArray[int], 0)
+	da := New[int]()
 
 	da.PushBack(42)
 	da.PushBack(12)
@@ -65,7 +63,7 @@ func TestDynamicArray_Back(t *testing.T) {
 }
 
 func TestDynamicArray_Len(t *testing.T) {
-	da := make(DynamicArray[int], 0)
+	da := New[int]()
 
 	da.PushBack(42)
 	da.PushBack(12)
@@ -79,7 +77,7 @@ func TestDynamicArray_Len(t *testing.T) {
 }
 
 func TestDynamicArray_Cap(t *testing.T) {
-	da := make(DynamicArray[int], 0)
+	da := New[int]()
 
 	da.PushBack(42)
 	da.PushBack(12)
@@ -173,7 +171,7 @@ func TestIterator_Advance(t *testing.T) {
 }
 
 func ExampleDynamicArray_PushBack() {
-	da := make(DynamicArray[int], 0)
+	da := New[int]()
 
 	da.PushBack(42)
 	da.PushBack(12)
@@ -183,7 +181,7 @@ func ExampleDynamicArray_PushBack() {
 }
 
 func ExampleDynamicArray_PopBack() {
-	da := make(DynamicArray[int], 0)
+	da := New[int]()
 
 	da.PushBack(42)
 	da.PushBack(12)
@@ -195,7 +193,7 @@ func ExampleDynamicArray_PopBack() {
 }
 
 func ExampleDynamicArray_Front() {
-	da := make(DynamicArray[int], 0)
+	da := New[int]()
 
 	da.PushBack(42)
 	da.PushBack(12)
@@ -206,7 +204,7 @@ func ExampleDynamicArray_Front() {
 }
 
 func ExampleDynamicArray_Back() {
-	da := make(DynamicArray[int], 0)
+	da := New[int]()
 
 	da.PushBack(42)
 	da.PushBack(12)
@@ -217,7 +215,7 @@ func ExampleDynamicArray_Back() {
 }
 
 func ExampleDynamicArray_Len() {
-	da := make(DynamicArray[int], 0)
+	da := New[int]()
 
 	da.PushBack(42)
 	da.PushBack(12)
@@ -228,7 +226,7 @@ func ExampleDynamicArray_Len() {
 }
 
 func ExampleDynamicArray_Cap() {
-	da := make(DynamicArray[int], 0)
+	da := New[int]()
 
 	da.PushBack(42)
 	da.PushBack(12)

@@ -5,6 +5,10 @@ package dynamic_array
 // Equivalent to a slice.
 type DynamicArray[T any] []T
 
+func New[T any]() DynamicArray[T] {
+	return DynamicArray[T]{}
+}
+
 // Return the number of element.
 //
 // time complexity: O(1)
