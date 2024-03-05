@@ -1,9 +1,10 @@
 package avl_tree
 
-type node[T any] struct {
-	key    T
-	left   *node[T]
-	right  *node[T]
+type node[K any, V any] struct {
+	left   *node[K, V]
+	right  *node[K, V]
+	key    K
+	value  V
 	height int
 }
 
@@ -12,7 +13,7 @@ type node[T any] struct {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (n *node[T]) childHeights() (int, int) {
+func (n *node[K, V]) childHeights() (int, int) {
 	l, r := -1, -1
 	if n.left != nil {
 		l = n.left.height
@@ -28,7 +29,7 @@ func (n *node[T]) childHeights() (int, int) {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (n *node[T]) updateHeight() {
+func (n *node[K, V]) updateHeight() {
 	l, r := n.childHeights()
 	n.height = max(l, r) + 1
 }
@@ -40,15 +41,19 @@ func (n *node[T]) updateHeight() {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (n *node[T]) balanceFactor() int {
+func (n *node[K, V]) balanceFactor() int {
 	l, r := n.childHeights()
 	return r - l
 }
 
-type AVLTree[T any] struct {
-	root *node[T]
+type AVLTree[K any, V any] struct {
+	root *node[K, V]
 	len  int
-	Cmp  func(T, T) int
+	cmp  func(K, K) int
+}
+
+func New[K any, V any](predicate func(K, K) int) AVLTree[K, V] {
+	return AVLTree[K, V]{cmp: predicate}
 }
 
 // Return the number of element.
@@ -56,17 +61,19 @@ type AVLTree[T any] struct {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (a *AVLTree[T]) Len() int {
+func (a *AVLTree[K, V]) Len() int {
 	return a.len
 }
 
-// Insert e to the tree.
+// Insert a key value pair to the tree.
+//
+// If the key value pair entry already exists, it updates the value.
 //
 // time complexity: O(log(len))
 //
 // space complexity: O(1)
-func (a *AVLTree[T]) Insert(e T) {
-	stack := [32]**node[T]{}
+func (a *AVLTree[K, V]) Insert(key K, value V) {
+	stack := [32]**node[K, V]{}
 	pos := -1
 
 	curr := &a.root
@@ -74,56 +81,7 @@ func (a *AVLTree[T]) Insert(e T) {
 		pos++
 		stack[pos] = curr
 
-		if cmp := a.Cmp(e, (*curr).key); cmp < 0 {
-			curr = &(*curr).left
-		} else if cmp > 0 {
-			curr = &(*curr).right
-		} else {
-			return
-		}
-	}
-	*curr = &node[T]{e, nil, nil, 0}
-	a.len++
-
-	for i := pos; i >= 0; i-- {
-		a.balance(stack[i])
-	}
-}
-
-// Return true if the tree contains e.
-//
-// time complexity: O(log(len))
-//
-// space complexity: O(1)
-func (a *AVLTree[T]) Contain(e T) bool {
-	for curr := a.root; curr != nil; {
-		if cmp := a.Cmp(e, (*curr).key); cmp < 0 {
-			curr = curr.left
-		} else if cmp > 0 {
-			curr = curr.right
-		} else {
-			return true
-		}
-	}
-	return false
-}
-
-// Remove e from the tree.
-//
-// time complexity: O(log(len))
-//
-// space complexity: O(1)
-func (a *AVLTree[T]) Remove(e T) {
-	stack := [32]**node[T]{}
-	pos := -1
-
-	//find the node to remove
-	curr := &a.root
-	for *curr != nil {
-		pos++
-		stack[pos] = curr
-
-		if cmp := a.Cmp(e, (*curr).key); cmp < 0 {
+		if cmp := a.cmp(key, (*curr).key); cmp < 0 {
 			curr = &(*curr).left
 		} else if cmp > 0 {
 			curr = &(*curr).right
@@ -132,55 +90,125 @@ func (a *AVLTree[T]) Remove(e T) {
 		}
 	}
 
-	//find the replacement
-	if *curr != nil {
-		if (*curr).right == nil {
-			*curr = (*curr).left
-		} else {
-			target := *curr
-			for curr = &(*curr).right; (*curr).left != nil; curr = &(*curr).left {
-				pos++
-				stack[pos] = curr
-			}
-			target.key = (*curr).key
-			*curr = (*curr).right
+	if *curr == nil {
+		*curr = &node[K, V]{left: nil, right: nil, key: key, value: value, height: 0}
+		a.len++
+		for ; pos >= 0; pos-- {
+			a.balance(stack[pos])
 		}
-
-		if *stack[pos] == nil {
-			pos--
-		}
-
-		a.len--
-		for i := pos; i >= 0; i-- {
-			a.balance(stack[i])
-		}
+	} else {
+		(*curr).value = value
 	}
 }
 
-// Return the min element.
+// Return the value and true, if the key exists.
 //
 // time complexity: O(log(len))
 //
 // space complexity: O(1)
-func (a *AVLTree[T]) Min() T {
+func (a *AVLTree[K, V]) Get(key K) (V, bool) {
+	for curr := a.root; curr != nil; {
+		if cmp := a.cmp(key, (*curr).key); cmp < 0 {
+			curr = curr.left
+		} else if cmp > 0 {
+			curr = curr.right
+		} else {
+			return curr.value, true
+		}
+	}
+
+	var zero V
+	return zero, false
+}
+
+// Return true if the tree contains the key.
+//
+// time complexity: O(log(len))
+//
+// space complexity: O(1)
+func (a *AVLTree[K, V]) Contain(key K) bool {
+	_, exist := a.Get(key)
+	return exist
+}
+
+// Remove key entry from the tree.
+//
+// time complexity: O(log(len))
+//
+// space complexity: O(1)
+func (a *AVLTree[K, V]) Remove(key K) {
+	stack := [32]**node[K, V]{}
+	pos := -1
+
+	//find the node to remove
+	curr := &a.root
+	for *curr != nil {
+		pos++
+		stack[pos] = curr
+
+		if cmp := a.cmp(key, (*curr).key); cmp < 0 {
+			curr = &(*curr).left
+		} else if cmp > 0 {
+			curr = &(*curr).right
+		} else {
+			break
+		}
+	}
+
+	//key does not exist
+	if *curr == nil {
+		return
+	}
+
+	//find the replacement
+	if (*curr).right == nil {
+		*curr = (*curr).left
+	} else {
+		replace := &(*curr).right
+		for ; (*replace).left != nil; replace = &(*replace).left {
+			pos++
+			stack[pos] = replace
+		}
+		(*curr).key = (*replace).key
+		(*curr).value = (*replace).value
+		*replace = (*replace).right
+	}
+
+	//delete a leave node
+	if *stack[pos] == nil {
+		pos--
+	}
+	a.len--
+
+	for ; pos >= 0; pos-- {
+		a.balance(stack[pos])
+	}
+}
+
+// Return the min key value pair.
+//
+// time complexity: O(log(len))
+//
+// space complexity: O(1)
+func (a *AVLTree[K, V]) Min() (K, V) {
 	curr := a.root
 	for curr.left != nil {
 		curr = curr.left
 	}
-	return curr.key
+	return curr.key, curr.value
 }
 
-// Return the max element.
+// Return the max key value pair.
 //
 // time complexity: O(log(len))
 //
 // space complexity: O(1)
-func (a *AVLTree[T]) Max() T {
+func (a *AVLTree[K, V]) Max() (K, V) {
 	curr := a.root
 	for curr.right != nil {
 		curr = curr.right
 	}
-	return curr.key
+	return curr.key, curr.value
 }
 
 // Balance the subtree rooted at p.
@@ -188,7 +216,7 @@ func (a *AVLTree[T]) Max() T {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (a *AVLTree[T]) balance(p **node[T]) {
+func (a *AVLTree[K, V]) balance(p **node[K, V]) {
 	if factor := (*p).balanceFactor(); factor < -1 {
 		if (*p).left.balanceFactor() <= 0 {
 			a.rightRotate(p)
@@ -214,7 +242,7 @@ func (a *AVLTree[T]) balance(p **node[T]) {
 //
 // space complexity: O(1)
 
-func (a *AVLTree[T]) leftRotate(p **node[T]) {
+func (a *AVLTree[K, V]) leftRotate(p **node[K, V]) {
 	//   p
 	//   x
 	//  / \
@@ -232,7 +260,7 @@ func (a *AVLTree[T]) leftRotate(p **node[T]) {
 	y.updateHeight()
 }
 
-func (a *AVLTree[T]) rightRotate(p **node[T]) {
+func (a *AVLTree[K, V]) rightRotate(p **node[K, V]) {
 	//       p
 	//       x
 	//      / \
@@ -250,7 +278,7 @@ func (a *AVLTree[T]) rightRotate(p **node[T]) {
 	y.updateHeight()
 }
 
-func (a *AVLTree[T]) leftRightRotate(p **node[T]) {
+func (a *AVLTree[K, V]) leftRightRotate(p **node[K, V]) {
 	//      p
 	//      x
 	//     / \
@@ -272,7 +300,7 @@ func (a *AVLTree[T]) leftRightRotate(p **node[T]) {
 	z.updateHeight()
 }
 
-func (a *AVLTree[T]) rightLeftRotate(p **node[T]) {
+func (a *AVLTree[K, V]) rightLeftRotate(p **node[K, V]) {
 	//    p
 	//    x
 	//   / \
@@ -299,12 +327,12 @@ func (a *AVLTree[T]) rightLeftRotate(p **node[T]) {
 // time complexity: O(1)
 //
 // space complexity: O(1)
-func (a *AVLTree[T]) Begin() Iterator[T] {
+func (a *AVLTree[K, V]) Begin() Iterator[K, V] {
 	height := 0
 	if a.root != nil {
 		height = a.root.height + 1
 	}
-	iter := Iterator[T]{make([]*node[T], 0, height)}
+	iter := Iterator[K, V]{make([]*node[K, V], 0, height)}
 	iter.addLeftTree(a.root)
 	return iter
 }
