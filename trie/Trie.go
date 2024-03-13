@@ -10,6 +10,7 @@ type node[V any] struct {
 	children map[rune]*node[V]
 }
 
+// A trie that maps a string to a value, supports unicode.
 type Trie[V any] struct {
 	root node[V]
 	len  int

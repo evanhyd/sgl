@@ -328,7 +328,7 @@ func BenchmarkTrie_Remove_Big(b *testing.B) {
 	}
 }
 
-func ExampleAVLTree_Insert() {
+func ExampleTrie_Insert() {
 	trie := New[int]()
 	trie.Insert("hello", 1)
 	trie.Insert("world", 2)
@@ -339,7 +339,7 @@ func ExampleAVLTree_Insert() {
 	// 4
 }
 
-func ExampleAVLTree_Get() {
+func ExampleTrie_Get() {
 	trie := New[int]()
 	trie.Insert("hello, 世界", 123)
 
@@ -350,7 +350,7 @@ func ExampleAVLTree_Get() {
 	// 123 true
 }
 
-func ExampleAVLTree_Remove() {
+func ExampleTrie_Remove() {
 	trie := New[int]()
 	trie.Insert("hello, 世界", 123)
 
