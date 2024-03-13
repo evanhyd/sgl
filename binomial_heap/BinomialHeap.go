@@ -30,19 +30,11 @@ func New[T any](predicate func(T, T) int) BinomialHeap[T] {
 }
 
 // Return the number of element.
-//
-// time complexity: O(1)
-//
-// space complexity: O(1)
 func (b *BinomialHeap[T]) Len() int {
 	return b.len
 }
 
 // Push e to the heap.
-//
-// time complexity: amortized O(log(len))
-//
-// space complexity: O(1)
 func (b *BinomialHeap[T]) Push(e T) {
 	b.len++
 	b.reserve()
@@ -50,10 +42,6 @@ func (b *BinomialHeap[T]) Push(e T) {
 }
 
 // Remove the top element from the heap.
-//
-// time complexity: O(log(len))
-//
-// space complexity: O(1)
 func (b *BinomialHeap[T]) Pop() {
 	b.len--
 	height := b.max()
@@ -70,19 +58,11 @@ func (b *BinomialHeap[T]) Pop() {
 }
 
 // Return the top of the heap.
-//
-// time complexity: O(1)
-//
-// space complexity: O(1)
 func (b *BinomialHeap[T]) Top() T {
 	return b.trees[b.max()].key
 }
 
 // Merge and destruct the heap into the current heap.
-//
-// time complexity: amortized O(log(len1) + log(len2))
-//
-// space complexity: O(1)
 func (b *BinomialHeap[T]) Merge(heap BinomialHeap[T]) {
 	b.len += heap.len
 	b.reserve()
@@ -94,10 +74,6 @@ func (b *BinomialHeap[T]) Merge(heap BinomialHeap[T]) {
 }
 
 // Find the top of the heap, return the index of the flag tree.
-//
-// time complexity: O(log(len))
-//
-// space complexity: O(1)
 func (b *BinomialHeap[T]) max() int {
 	m := -1
 	for i, tree := range b.trees {
@@ -109,10 +85,6 @@ func (b *BinomialHeap[T]) max() int {
 }
 
 // Reserve enough memory for tree list based on len.
-//
-// time complexity: O(1)
-//
-// space complexity: O(log(len))
 func (b *BinomialHeap[T]) reserve() {
 	maxHeight := bits.Len(uint(b.len))
 	if len(b.trees) < maxHeight {
@@ -123,10 +95,6 @@ func (b *BinomialHeap[T]) reserve() {
 }
 
 // Merge tree into the heap indexing by height
-//
-// time complexity: O(log(n))
-//
-// space complexity: O(1)
 func (b *BinomialHeap[T]) mergeTree(tree *flagTree[T], height int) {
 	for ; height < len(b.trees); height++ {
 		t := b.trees[height]

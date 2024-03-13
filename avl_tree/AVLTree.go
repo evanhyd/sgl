@@ -9,10 +9,6 @@ type node[K any, V any] struct {
 }
 
 // Get the height of the left and right child nodes.
-//
-// time complexity: O(1)
-//
-// space complexity: O(1)
 func (n *node[K, V]) childHeights() (int, int) {
 	l, r := -1, -1
 	if n.left != nil {
@@ -25,10 +21,6 @@ func (n *node[K, V]) childHeights() (int, int) {
 }
 
 // Update the node height based on child nodes' height.
-//
-// time complexity: O(1)
-//
-// space complexity: O(1)
 func (n *node[K, V]) updateHeight() {
 	l, r := n.childHeights()
 	n.height = max(l, r) + 1
@@ -37,10 +29,6 @@ func (n *node[K, V]) updateHeight() {
 // Return the node balance factor.
 //
 // < 0 if left heavy, > 0 if right heavy, 0 if balance
-//
-// time complexity: O(1)
-//
-// space complexity: O(1)
 func (n *node[K, V]) balanceFactor() int {
 	l, r := n.childHeights()
 	return r - l
@@ -57,10 +45,6 @@ func New[K any, V any](predicate func(K, K) int) AVLTree[K, V] {
 }
 
 // Return the number of element.
-//
-// time complexity: O(1)
-//
-// space complexity: O(1)
 func (a *AVLTree[K, V]) Len() int {
 	return a.len
 }
@@ -68,10 +52,6 @@ func (a *AVLTree[K, V]) Len() int {
 // Insert a key value pair to the tree.
 //
 // If the key value pair entry already exists, it updates the value.
-//
-// time complexity: O(log(len))
-//
-// space complexity: O(1)
 func (a *AVLTree[K, V]) Insert(key K, value V) {
 	stack := [32]**node[K, V]{}
 	pos := -1
@@ -101,11 +81,11 @@ func (a *AVLTree[K, V]) Insert(key K, value V) {
 	}
 }
 
-// Return the value and true, if the key exists.
+// Return the value and the exist indicator.
 //
-// time complexity: O(log(len))
+// If the key exists, it returns (value, true).
 //
-// space complexity: O(1)
+// Otherwise, it returns (zero value, false).
 func (a *AVLTree[K, V]) Get(key K) (V, bool) {
 	for curr := a.root; curr != nil; {
 		if cmp := a.cmp(key, (*curr).key); cmp < 0 {
@@ -121,21 +101,7 @@ func (a *AVLTree[K, V]) Get(key K) (V, bool) {
 	return zero, false
 }
 
-// Return true if the tree contains the key.
-//
-// time complexity: O(log(len))
-//
-// space complexity: O(1)
-func (a *AVLTree[K, V]) Contain(key K) bool {
-	_, exist := a.Get(key)
-	return exist
-}
-
 // Remove key entry from the tree.
-//
-// time complexity: O(log(len))
-//
-// space complexity: O(1)
 func (a *AVLTree[K, V]) Remove(key K) {
 	stack := [32]**node[K, V]{}
 	pos := -1
@@ -186,10 +152,6 @@ func (a *AVLTree[K, V]) Remove(key K) {
 }
 
 // Return the min key value pair.
-//
-// time complexity: O(log(len))
-//
-// space complexity: O(1)
 func (a *AVLTree[K, V]) Min() (K, V) {
 	curr := a.root
 	for curr.left != nil {
@@ -199,10 +161,6 @@ func (a *AVLTree[K, V]) Min() (K, V) {
 }
 
 // Return the max key value pair.
-//
-// time complexity: O(log(len))
-//
-// space complexity: O(1)
 func (a *AVLTree[K, V]) Max() (K, V) {
 	curr := a.root
 	for curr.right != nil {
@@ -212,10 +170,6 @@ func (a *AVLTree[K, V]) Max() (K, V) {
 }
 
 // Balance the subtree rooted at p.
-//
-// time complexity: O(1)
-//
-// space complexity: O(1)
 func (a *AVLTree[K, V]) balance(p **node[K, V]) {
 	if factor := (*p).balanceFactor(); factor < -1 {
 		if (*p).left.balanceFactor() <= 0 {
@@ -237,10 +191,6 @@ func (a *AVLTree[K, V]) balance(p **node[K, V]) {
 // These functions rotate the tree based on different cases.
 //
 // It only involves moving pointers around.
-//
-// time complexity: O(1)
-//
-// space complexity: O(1)
 
 func (a *AVLTree[K, V]) leftRotate(p **node[K, V]) {
 	//   p
@@ -323,10 +273,6 @@ func (a *AVLTree[K, V]) rightLeftRotate(p **node[K, V]) {
 }
 
 // Return an iterator points to the first element.
-//
-// time complexity: O(1)
-//
-// space complexity: O(1)
 func (a *AVLTree[K, V]) Begin() Iterator[K, V] {
 	height := 0
 	if a.root != nil {

@@ -157,31 +157,6 @@ func TestAVLTree_Get(t *testing.T) {
 	}
 }
 
-func TestAVLTree_Contain(t *testing.T) {
-	const testSize = 1 << 10
-	tree := New[int, int](func(a, b int) int { return a - b })
-	sTree := map[int]int{}
-	keys := append(rand.Perm(testSize), rand.Perm(testSize)...)
-	values := append(rand.Perm(testSize), rand.Perm(testSize)...)
-
-	for i := 0; i < testSize; i++ {
-		_, expected := sTree[keys[i]]
-		if tree.Contain(keys[i]) != expected {
-			t.Fatalf("Contain(%v) = false, want %v", keys[i], expected)
-		}
-
-		tree.Insert(keys[i], values[i])
-		sTree[keys[i]] = values[i]
-
-		_, expected = sTree[keys[i]]
-		if tree.Contain(keys[i]) != expected {
-			t.Fatalf("Contain(%v) = false, want %v", keys[i], expected)
-		}
-
-		assertTree(t, tree)
-	}
-}
-
 func TestAVLTree_Remove(t *testing.T) {
 	const testSize = 1 << 10
 	tree := New[int, int](func(a, b int) int { return a - b })
@@ -210,7 +185,7 @@ func TestAVLTree_Remove(t *testing.T) {
 		}
 
 		_, expected := sTree[key]
-		actual := tree.Contain(key)
+		_, actual := tree.Get(key)
 		if expected != actual {
 			t.Fatalf("Contain(%v) = %v, want %v", keys[i], actual, expected)
 		}
@@ -281,15 +256,20 @@ func BenchmarkAVLTree_Insert_Small(b *testing.B) {
 
 func BenchmarkAVLTree_Insert_Big(b *testing.B) {
 	// [20]int64
-	// BenchmarkAVLTree_Insert_Big-16    	 2621635	       440.2 ns/op	     192 B/op	       1 allocs/op
-	// BenchmarkAVLTree_Insert_Big-16    	 2752646	       409.1 ns/op	     192 B/op	       1 allocs/op
-	// BenchmarkAVLTree_Insert_Big-16    	 2662844	       439.5 ns/op	     192 B/op	       1 allocs/op
+	// BenchmarkAVLTree_Insert_Big-16    	 2670862	       421.3 ns/op	     192 B/op	       1 allocs/op
+	// BenchmarkAVLTree_Insert_Big-16    	 2667331	       413.9 ns/op	     192 B/op	       1 allocs/op
+	// BenchmarkAVLTree_Insert_Big-16    	 2506341	       416.8 ns/op	     192 B/op	       1 allocs/op
 
 	type Large [20]int64
 	tree := New[Large, int64](func(a, b Large) int { return int(a[0] - b[0]) })
+	keys := make([]Large, b.N)
+	for i := 0; i < b.N; i++ {
+		keys[i] = Large{int64(i)}
+	}
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		tree.Insert(Large{int64(i)}, int64(i))
+		tree.Insert(keys[i], int64(i))
 	}
 }
 
@@ -316,31 +296,18 @@ func ExampleAVLTree_Get() {
 	// 0 false
 }
 
-func ExampleAVLTree_Contain() {
-	tree := New[int, int](func(a, b int) int { return a - b })
-	tree.Insert(10, 20)
-	tree.Insert(5, 10)
-	tree.Insert(15, 125)
-
-	fmt.Println(tree.Contain(10))
-	fmt.Println(tree.Contain(6))
-	// Output:
-	// true
-	// false
-}
-
 func ExampleAVLTree_Remove() {
 	tree := New[int, int](func(a, b int) int { return a - b })
 	tree.Insert(10, 20)
 	tree.Insert(5, 10)
 	tree.Insert(15, 125)
 
-	fmt.Println(tree.Contain(5))
+	fmt.Println(tree.Get(5))
 	tree.Remove(5)
-	fmt.Println(tree.Contain(5))
+	fmt.Println(tree.Get(5))
 	// Output:
-	// true
-	// false
+	// 10 true
+	// 0 false
 }
 
 func ExampleAVLTree_Min() {
