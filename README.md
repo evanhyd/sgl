@@ -1,3 +1,7 @@
+[![GoDoc](https://godoc.org/github.com/evanhyd/sgl?status.svg)](https://godoc.org/github.com/evanhyd/sgl)
+[![Go Report Card](https://goreportcard.com/badge/github.com/evanhyd/sgl)](https://goreportcard.com/report/github.com/evanhyd/sgl)
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/evanhyd/sgl/blob/master/LICENSE)
+
 # Standard Generic Library (SGL)
 A generic data structure library in go.
 
